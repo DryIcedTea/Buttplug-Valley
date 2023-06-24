@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.TerrainFeatures;
+using Object = StardewValley.Object;
 
 namespace ButtplugValley
 {
@@ -29,7 +32,32 @@ namespace ButtplugValley
             helper.Events.GameLoop.DayEnding += OnDayEnding;
             helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
             helper.Events.World.TerrainFeatureListChanged += OnTerrainFeatureListChanged;
+            helper.Events.World.ObjectListChanged += OnObjectListChanged;
             helper.Events.Player.InventoryChanged += OnInventoryChanged;
+        }
+
+        private void OnObjectListChanged(object sender, ObjectListChangedEventArgs e)
+        {
+            if (e.IsCurrentLocation)
+            {
+                GameLocation location = Game1.currentLocation;
+
+                // Check each object in the location
+                foreach (KeyValuePair<Vector2, StardewValley.Object> pair in location.Objects.Pairs)
+                {
+                    Vector2 tilePosition = pair.Key;
+                    StardewValley.Object obj = pair.Value;
+
+                    // Check if the object is a stone
+                    if (obj.Name == "Stone")
+                    {
+                        // Vibrate the device when a stone is present
+                        //this.Monitor.Log("Stone Detected", LogLevel.Debug);
+                        buttplugManager.VibrateDevicePulse(60);
+                        break;
+                    }
+                }
+            }
         }
 
         private void OnDayEnding(object sender, DayEndingEventArgs e)
@@ -123,9 +151,7 @@ namespace ButtplugValley
                 {
                     if (feature.Value is Tree tree)
                     {
-                        if (tree.stump.Value)
-                        {
-                            // Tree is fully chopped
+                        // Tree is fully chopped
                             Task.Run(async () =>
                             {
                                 this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {80}.", LogLevel.Debug);
@@ -133,18 +159,15 @@ namespace ButtplugValley
                                 await Task.Delay(420);
                                 await buttplugManager.VibrateDevice(0);
                             });
-                        }
-                        else
+                    }
+                    if (feature.Value is ResourceClump resourceClump)
+                    {
+                        // Large rock or stub i think
+                        Task.Run(async () =>
                         {
-                            // Tree is being chopped. This does not work. If someone knows how to fix, then please do.
-                            Task.Run(async () =>
-                            {
-                                this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {50}.", LogLevel.Debug);
-                                await buttplugManager.VibrateDevice(50);
-                                await Task.Delay(380);
-                                await buttplugManager.VibrateDevice(0);
-                            });
-                        }
+                            this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {80}. for 1.2 seconds", LogLevel.Debug);
+                            await buttplugManager.VibrateDevicePulse(80, 1200);
+                        });
                     }
                 }
             }
