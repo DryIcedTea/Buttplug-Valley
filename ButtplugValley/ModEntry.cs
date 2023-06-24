@@ -176,13 +176,13 @@ namespace ButtplugValley
             if (e.Button == SButton.P)
             {
                 // Stop Vibrations
-                buttplugManager.VibrateDevice(0);
+                Task.Run(async () => await buttplugManager.StopDevices());
             }
             if (e.Button == SButton.I)
             {
                 Task.Run(async () =>
                 {
-                    await buttplugManager.VibrateDevice(0);
+                    await buttplugManager.StopDevices();
                     await buttplugManager.DisconnectButtplug();
                 });
 
@@ -192,7 +192,6 @@ namespace ButtplugValley
                 // Reconnect
                 Task.Run(async () =>
                 {
-                    await buttplugManager.VibrateDevice(0);
                     await buttplugManager.ConnectButtplug();
                 });
             }
