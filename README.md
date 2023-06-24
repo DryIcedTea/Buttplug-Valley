@@ -1,5 +1,5 @@
 # Buttplug Valley
-## A Buttplug.io mod for Stardew Valley
+## A [Buttplug.io](https://buttplug.io/) mod for Stardew Valley
 
 I originally made this mod for my partner after discovering the lack of a buttplug stardew mod, but I figured I'd make it public. This mod allows you to connect your Buttplug.io compatible toys to Stardew Valley. It's a very simple mod, but it works.
 
@@ -7,7 +7,7 @@ I originally made this mod for my partner after discovering the lack of a buttpl
 1. Install [Intiface Central](https://intiface.com/central/)
    - This is what the mod uses to communicate with your toys.
 2. Install [SMAPI](https://smapi.io/).
-3. Install the Buttplug Valley Mod and place it in your Stardew Valley Mods folder.
+3. Install the [Buttplug Valley Mod](https://github.com/DryIcedTea/Buttplug-Valley/releases) and place it in your Stardew Valley Mods folder.
 
 ## Keybinds
 * `P` - Stop Vibration
@@ -31,10 +31,12 @@ No, not yet, but it is something I want to add in the future when I figure out h
 This has not been tested, but I don't see why not
 ### Does it support multiple toys at once?
 No, not yet.
+### Will you add or change X feature?
+Maybe. Please let me know what you want to see added/changed!
 
 ## Feedback
-If you have any feedback, feel free to open an issue or contact me on discord.
+If you have any feedback, feel free to open an issue or contact me on discord. You'll find me in the buttplug.io discord!
 I honestly don't know what I'm doing, so feedback is **very** much appreciated. (please)
 
-(If you want to help me make this mod better, that would be amazing and very much appreciated!)
+(If you want to help me make this mod better, that would be amazing and very much appreciated! This is very much a hobby project, so I don't know how often updates will come out)
 

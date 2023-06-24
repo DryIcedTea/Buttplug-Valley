@@ -113,18 +113,14 @@ namespace ButtplugValley
 
         private void OnTerrainFeatureListChanged(object sender, TerrainFeatureListChangedEventArgs e)
         {
-            this.Monitor.Log("FEATURELISTCHANGED YES", LogLevel.Debug);
             if (e.IsCurrentLocation)
             {
-                this.Monitor.Log("ISCURRENTLOCATION YES", LogLevel.Debug);
                 foreach (var feature in e.Removed)
                 {
                     if (feature.Value is Tree tree)
                     {
-                        this.Monitor.Log("IS TREE VALUE YES", LogLevel.Debug);
                         if (tree.stump.Value)
                         {
-                            this.Monitor.Log("IS STUMP YES", LogLevel.Debug);
                             // Tree is fully chopped
                             Task.Run(async () =>
                             {
