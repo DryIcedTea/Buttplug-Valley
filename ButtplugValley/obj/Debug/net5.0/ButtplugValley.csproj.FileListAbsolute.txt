@@ -1,0 +1,16 @@
+C:\Users\Ander\Documents\GitHub\OtherProjects\Buttplug Valley\ButtplugValley\bin\Debug\net5.0\ButtplugValley.deps.json
+C:\Users\Ander\Documents\GitHub\OtherProjects\Buttplug Valley\ButtplugValley\bin\Debug\net5.0\ButtplugValley.dll
+C:\Users\Ander\Documents\GitHub\OtherProjects\Buttplug Valley\ButtplugValley\bin\Debug\net5.0\ButtplugValley.pdb
+C:\Users\Ander\Documents\GitHub\OtherProjects\Buttplug Valley\ButtplugValley\bin\Debug\net5.0\Buttplug.dll
+C:\Users\Ander\Documents\GitHub\OtherProjects\Buttplug Valley\ButtplugValley\bin\Debug\net5.0\Buttplug.Client.Connectors.WebsocketConnector.dll
+C:\Users\Ander\Documents\GitHub\OtherProjects\Buttplug Valley\ButtplugValley\bin\Debug\net5.0\deniszykov.WebSocketListener.dll
+C:\Users\Ander\Documents\GitHub\OtherProjects\Buttplug Valley\ButtplugValley\bin\Debug\net5.0\Newtonsoft.Json.dll
+C:\Users\Ander\Documents\GitHub\OtherProjects\Buttplug Valley\ButtplugValley\bin\Debug\net5.0\System.Threading.Tasks.Dataflow.dll
+C:\Users\Ander\Documents\GitHub\OtherProjects\Buttplug Valley\ButtplugValley\obj\Debug\net5.0\ButtplugValley.csproj.AssemblyReference.cache
+C:\Users\Ander\Documents\GitHub\OtherProjects\Buttplug Valley\ButtplugValley\obj\Debug\net5.0\ButtplugValley.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Ander\Documents\GitHub\OtherProjects\Buttplug Valley\ButtplugValley\obj\Debug\net5.0\ButtplugValley.AssemblyInfoInputs.cache
+C:\Users\Ander\Documents\GitHub\OtherProjects\Buttplug Valley\ButtplugValley\obj\Debug\net5.0\ButtplugValley.AssemblyInfo.cs
+C:\Users\Ander\Documents\GitHub\OtherProjects\Buttplug Valley\ButtplugValley\obj\Debug\net5.0\ButtplugValley.csproj.CoreCompileInputs.cache
+C:\Users\Ander\Documents\GitHub\OtherProjects\Buttplug Valley\ButtplugValley\obj\Debug\net5.0\ButtplugValley.csproj.CopyComplete
+C:\Users\Ander\Documents\GitHub\OtherProjects\Buttplug Valley\ButtplugValley\obj\Debug\net5.0\ButtplugValley.dll
+C:\Users\Ander\Documents\GitHub\OtherProjects\Buttplug Valley\ButtplugValley\obj\Debug\net5.0\ButtplugValley.pdb

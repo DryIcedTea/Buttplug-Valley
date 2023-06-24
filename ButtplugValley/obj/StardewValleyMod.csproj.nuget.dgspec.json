@@ -1,0 +1,77 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\Ander\\Documents\\GitHub\\OtherProjects\\Buttplug Valley\\StardewValleyMod\\StardewValleyMod.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\Ander\\Documents\\GitHub\\OtherProjects\\Buttplug Valley\\StardewValleyMod\\StardewValleyMod.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Ander\\Documents\\GitHub\\OtherProjects\\Buttplug Valley\\StardewValleyMod\\StardewValleyMod.csproj",
+        "projectName": "StardewValleyMod",
+        "projectPath": "C:\\Users\\Ander\\Documents\\GitHub\\OtherProjects\\Buttplug Valley\\StardewValleyMod\\StardewValleyMod.csproj",
+        "packagesPath": "C:\\Users\\Ander\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Ander\\Documents\\GitHub\\OtherProjects\\Buttplug Valley\\StardewValleyMod\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Ander\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "dependencies": {
+            "Buttplug": {
+              "target": "Package",
+              "version": "[3.0.0, )"
+            },
+            "Buttplug.Client.Connectors.WebsocketConnector": {
+              "target": "Package",
+              "version": "[3.0.0, )"
+            },
+            "Pathoschild.Stardew.ModBuildConfig": {
+              "target": "Package",
+              "version": "[4.1.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.402\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
