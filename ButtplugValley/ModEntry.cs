@@ -17,6 +17,8 @@ namespace ButtplugValley
         public override void Entry(IModHelper helper)
         {
             buttplugManager = new BPManager();
+            
+            buttplugManager.ScanForDevices();
             //fishingMinigame = new FishingMinigame(helper);
             buttplugManager.ConnectButtplug();
             
@@ -148,9 +150,6 @@ namespace ButtplugValley
 
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            // ignore if player hasn't loaded a save yet
-            if (!Context.IsWorldReady)
-                return;
 
             // print button presses to the console window
             //this.Monitor.Log($"{Game1.player.Name} pressed {e.Button}.", LogLevel.Debug);
@@ -179,14 +178,21 @@ namespace ButtplugValley
             }
             if (e.Button == SButton.I)
             {
-                // Stop Vibrations and disconnect
-                buttplugManager.VibrateDevice(0);
-                buttplugManager.DisconnectButtplug();
+                Task.Run(async () =>
+                {
+                    await buttplugManager.VibrateDevice(0);
+                    await buttplugManager.DisconnectButtplug();
+                });
+
             }
             if (e.Button == SButton.K)
             {
                 // Reconnect
-                buttplugManager.ConnectButtplug();
+                Task.Run(async () =>
+                {
+                    await buttplugManager.VibrateDevice(0);
+                    await buttplugManager.ConnectButtplug();
+                });
             }
         }
         private void OnDayStarted(object sender, DayStartedEventArgs e)

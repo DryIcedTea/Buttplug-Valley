@@ -16,6 +16,13 @@ namespace ButtplugValley
         private ButtplugClient client;
         private ModEntry _modEntry;
 
+        public async Task ScanForDevices()
+        {
+            //
+            await client.StartScanningAsync();
+            await Task.Delay(30000);
+            await client.StopScanningAsync();
+        }
         public async Task ConnectButtplug()
         {
             client = new ButtplugClient("ButtplugValley");
