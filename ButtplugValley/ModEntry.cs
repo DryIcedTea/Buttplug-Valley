@@ -17,11 +17,13 @@ namespace ButtplugValley
         public override void Entry(IModHelper helper)
         {
             buttplugManager = new BPManager();
-            
-            buttplugManager.ScanForDevices();
-            //fishingMinigame = new FishingMinigame(helper);
-            buttplugManager.ConnectButtplug();
-            
+            Task.Run(async () =>
+            {
+                await buttplugManager.ConnectButtplug();
+                await buttplugManager.ScanForDevices();
+                //fishingMinigame = new FishingMinigame(helper);
+            });
+
             helper.Events.Input.ButtonPressed += OnButtonPressed;
             helper.Events.GameLoop.DayStarted += OnDayStarted;
             helper.Events.GameLoop.DayEnding += OnDayEnding;
