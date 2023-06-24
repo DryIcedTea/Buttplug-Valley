@@ -5,7 +5,7 @@ I originally made this mod for my partner after discovering the lack of a buttpl
 
 ## Installation and Setup
 1. Install [Intiface Central](https://intiface.com/central/)
-   2. This is what the mod uses to communicate with your toys.
+   - This is what the mod uses to communicate with your toys.
 2. Install [SMAPI](https://smapi.io/).
 3. Install the Buttplug Valley Mod and place it in your Stardew Valley Mods folder.
 
@@ -27,6 +27,10 @@ I originally made this mod for my partner after discovering the lack of a buttpl
 Check Out [https://iostindex.com/](https://iostindex.com/).
 ### Is there an config?
 No, not yet, but it is something I want to add in the future when I figure out how!
+### Can I use this in multiplayer?
+This has not been tested, but I don't see why not
+### Does it support multiple toys at once?
+No, not yet.
 
 ## Feedback
 If you have any feedback, feel free to open an issue or contact me on discord.
