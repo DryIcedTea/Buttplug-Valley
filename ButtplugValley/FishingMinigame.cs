@@ -25,8 +25,7 @@ namespace ButtplugValley
 
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            // Your code for starting/stopping vibrations based on the fishing minigame button presses
-            // Use the ButtplugManager instance or pass it as a parameter to access the Buttplug functionality
+            
         }
 
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
@@ -63,7 +62,6 @@ namespace ButtplugValley
             // Reset previous capture level when a new day starts
             previousCaptureLevel = 0f;
         }
-
-        // Add other methods and event handlers as needed
+        
     }
 }
