@@ -44,7 +44,7 @@ namespace ButtplugValley
                 await device.VibrateAsync(intensity);
             }
         }
-        
+        //Short Vibration pulse. Intensity from 1-100
         public async Task VibrateDevicePulse(float level)
         {
             
@@ -57,6 +57,7 @@ namespace ButtplugValley
                 await device.VibrateAsync(0);
             }
         }
+        //Vibration with customizable duration. Intensity from 1-100
         public async Task VibrateDevicePulse(float level, int duration)
         {
             

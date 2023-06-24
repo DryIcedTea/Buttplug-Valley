@@ -38,5 +38,5 @@ Maybe. Please let me know what you want to see added/changed!
 If you have any feedback, feel free to open an issue or contact me on discord. You'll find me in the buttplug.io discord!
 I honestly don't know what I'm doing, so feedback is **very** much appreciated. (please)
 
-(If you want to help me make this mod better, that would be amazing and very much appreciated! This is very much a hobby project, so I don't know how often updates will come out)
+(If you want to help me make this mod better, that would be amazing and very much appreciated! This is very much a hobby project, so I don't know how often updates will come out. Apologies in advance for the bad code.)
 
