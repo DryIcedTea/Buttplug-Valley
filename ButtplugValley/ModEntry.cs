@@ -13,12 +13,14 @@ namespace ButtplugValley
     internal sealed class ModEntry : Mod
     {
         private BPManager buttplugManager;
+        private ModConfig Config;
         //private FishingMinigame fishingMinigame;
         private bool isVibrating = false;
         private int previousHealth;
 
         public override void Entry(IModHelper helper)
         {
+            this.Config = this.Helper.ReadConfig<ModConfig>();
             buttplugManager = new BPManager();
             Task.Run(async () =>
             {
@@ -49,7 +51,7 @@ namespace ButtplugValley
                     StardewValley.Object obj = pair.Value;
 
                     // Check if the object is a stone
-                    if (obj.Name == "Stone")
+                    if (obj.Name == "Stone" && Config.VibrateOnStoneBroken)
                     {
                         // Vibrate the device when a stone is present
                         //this.Monitor.Log("Stone Detected", LogLevel.Debug);
@@ -64,6 +66,8 @@ namespace ButtplugValley
         {
             Task.Run(async () =>
             {
+                if (!Config.VibrateOnDayEnd) return;
+                
                 this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {50} then 100.", LogLevel.Debug);
                 await buttplugManager.VibrateDevice(50);
                 await Task.Delay(800);
@@ -88,7 +92,7 @@ namespace ButtplugValley
                 // Check if the removed item is a crop
                 if (item is StardewValley.Object obj)
                 {
-                    if (obj.Category == StardewValley.Object.FishCategory)
+                    if (obj.Category == StardewValley.Object.FishCategory && Config.VibrateOnFishCollected)
                     {
                         if (obj.Quality == StardewValley.Object.medQuality) buttplugManager.VibrateDevicePulse(55);
                         else if (obj.Quality == StardewValley.Object.highQuality) buttplugManager.VibrateDevicePulse(85, 650);
@@ -100,6 +104,8 @@ namespace ButtplugValley
                     if (obj.Category == StardewValley.Object.VegetableCategory ||
                         obj.Category == StardewValley.Object.FruitsCategory || obj.Category == StardewValley.Object.MilkCategory )
                     {
+                        if (!Config.VibrateOnCropAndMilkCollected) return;
+                        
                         if (obj.Quality == StardewValley.Object.medQuality) buttplugManager.VibrateDevicePulse(55);
                         else if (obj.Quality == StardewValley.Object.highQuality) buttplugManager.VibrateDevicePulse(85, 650);
                         else if (obj.Quality == StardewValley.Object.bestQuality) buttplugManager.VibrateDevicePulse(100, 1200);
@@ -114,7 +120,7 @@ namespace ButtplugValley
                 // Check if the changed item is a crop
                 if (change.Item is StardewValley.Object obj)
                 {
-                    if (obj.Category == StardewValley.Object.FishCategory)
+                    if (obj.Category == StardewValley.Object.FishCategory && Config.VibrateOnFishCollected)
                     {
                         if (obj.Quality == StardewValley.Object.medQuality)
                             buttplugManager.VibrateDevicePulse(55);
@@ -129,6 +135,7 @@ namespace ButtplugValley
                     if (obj.Category == StardewValley.Object.VegetableCategory ||
                         obj.Category == StardewValley.Object.FruitsCategory)
                     {
+                        if (!Config.VibrateOnCropAndMilkCollected) return;
                         if (obj.Quality == StardewValley.Object.medQuality)
                             buttplugManager.VibrateDevicePulse(55);
                         else if (obj.Quality == StardewValley.Object.highQuality)
@@ -149,7 +156,7 @@ namespace ButtplugValley
             {
                 foreach (var feature in e.Removed)
                 {
-                    if (feature.Value is Tree tree)
+                    if (feature.Value is Tree tree && Config.VibrateOnTreeBroken)
                     {
                         // Tree is fully chopped
                             Task.Run(async () =>
@@ -160,7 +167,7 @@ namespace ButtplugValley
                                 await buttplugManager.VibrateDevice(0);
                             });
                     }
-                    if (feature.Value is ResourceClump resourceClump)
+                    if (feature.Value is ResourceClump resourceClump && Config.VibrateOnStoneBroken)
                     {
                         // Large rock or stub i think
                         Task.Run(async () =>
@@ -222,6 +229,7 @@ namespace ButtplugValley
         }
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
+            if (!Config.VibrateOnDayStart) return;
             //fishingMinigame.previousCaptureLevel = 0f;
             Task.Run(async () =>
             {
@@ -241,6 +249,7 @@ namespace ButtplugValley
             // Check if the player's health has decreased since the last tick
             if (Game1.player.health < previousHealth)
             {
+                if (!Config.VibrateOnDamageTaken) return;
                 float intensity = 100f * (1f - (float)Game1.player.health / (float)Game1.player.maxHealth);
                 intensity = Math.Min(intensity, 100f);
                 Task.Run(async () =>

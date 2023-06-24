@@ -26,7 +26,7 @@ I originally made this mod for my partner after discovering the lack of a buttpl
 ### What toys does this work with?
 Check Out [https://iostindex.com/](https://iostindex.com/).
 ### Is there an config?
-No, not yet, but it is something I want to add in the future when I figure out how!
+This shouuld be coming with the next update
 ### Can I use this in multiplayer?
 This has not been tested, but I don't see why not
 ### Does it support multiple toys at once?
