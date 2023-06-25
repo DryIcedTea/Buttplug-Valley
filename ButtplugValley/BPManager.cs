@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using StardewModdingAPI;
 
 namespace ButtplugValley
 {
@@ -11,6 +12,7 @@ namespace ButtplugValley
     {
         private ButtplugClient client = new ButtplugClient("ButtplugValley");
         private ModEntry _modEntry;
+        private IMonitor monitor;
 
         public async Task ScanForDevices()
         {
@@ -23,8 +25,9 @@ namespace ButtplugValley
             await Task.Delay(30000);
             await client.StopScanningAsync();
         }
-        public async Task ConnectButtplug()
+        public async Task ConnectButtplug(IMonitor meMonitor)
         {
+            monitor = meMonitor;
             // Don't stomp our client if it's already connected.
             if (client.Connected)
             {
@@ -60,9 +63,11 @@ namespace ButtplugValley
 
         public async Task VibrateDevice(float level)
         {
+            this.monitor.Log("Vibrate Device Called", LogLevel.Debug);
             // This implicited works as a Connected check, as Buttplug clears the device list on disconnect.
             if (!HasVibrators())
             {
+                this.monitor.Log("Has vibrators failed", LogLevel.Debug);
                 return;
             }
             float intensity = MathHelper.Clamp(level, 0f, 100f) / 100f;
@@ -70,6 +75,7 @@ namespace ButtplugValley
             {
                 if (device.VibrateAttributes.Count > 0)
                 {
+                    this.monitor.Log("VibrateAsync", LogLevel.Debug);
                     await device.VibrateAsync(intensity);
                 }
             }
@@ -86,6 +92,7 @@ namespace ButtplugValley
         {
             if (!HasVibrators())
             {
+                this.monitor.Log("Has vibrators failed", LogLevel.Debug);
                 return;
             }
             float intensity = MathHelper.Clamp(level, 0f, 100f) / 100f;

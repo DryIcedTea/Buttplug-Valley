@@ -12,7 +12,7 @@ namespace ButtplugValley
 {
     internal sealed class ModEntry : Mod
     {
-        private BPManager buttplugManager;
+        private OldBPManager buttplugManager;
         private ModConfig Config;
         //private FishingMinigame fishingMinigame;
         private bool isVibrating = false;
@@ -21,10 +21,10 @@ namespace ButtplugValley
         public override void Entry(IModHelper helper)
         {
             this.Config = this.Helper.ReadConfig<ModConfig>();
-            buttplugManager = new BPManager();
+            buttplugManager = new OldBPManager();
             Task.Run(async () =>
             {
-                await buttplugManager.ConnectButtplug();
+                await buttplugManager.ConnectButtplug(Monitor);
                 await buttplugManager.ScanForDevices();
                 //fishingMinigame = new FishingMinigame(helper);
             });
@@ -36,6 +36,169 @@ namespace ButtplugValley
             helper.Events.World.TerrainFeatureListChanged += OnTerrainFeatureListChanged;
             helper.Events.World.ObjectListChanged += OnObjectListChanged;
             helper.Events.Player.InventoryChanged += OnInventoryChanged;
+            helper.Events.GameLoop.GameLaunched += OnGameLaunched;
+        }
+
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
+        {
+            // get Generic Mod Config Menu's API (if it's installed)
+            var configMenu = this.Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu is null)
+                return;
+
+            // register mod
+            configMenu.Register(
+                mod: this.ModManifest,
+                reset: () => this.Config = new ModConfig(),
+                save: () => this.Helper.WriteConfig(this.Config)
+            );
+            
+            configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Vibration Events");
+
+            // add some config options
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Crop and Milk Pickup",
+                tooltip: () => "Should the device vibrate on collecting crops and milk?",
+                getValue: () => this.Config.VibrateOnCropAndMilkCollected,
+                setValue: value => this.Config.VibrateOnCropAndMilkCollected = value
+            );
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Fish Pickup",
+                tooltip: () => "Should the device vibrate on collecting fish?",
+                getValue: () => this.Config.VibrateOnFishCollected,
+                setValue: value => this.Config.VibrateOnFishCollected = value
+            );
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Stone Broken",
+                tooltip: () => "Should the device vibrate on breaking stone and ores?",
+                getValue: () => this.Config.VibrateOnStoneBroken,
+                setValue: value => this.Config.VibrateOnStoneBroken = value
+            );
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Tree Broken",
+                tooltip: () => "Should the device vibrate on fully chopping down a tree?",
+                getValue: () => this.Config.VibrateOnTreeBroken,
+                setValue: value => this.Config.VibrateOnTreeBroken = value
+            );
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Damage Taken",
+                tooltip: () => "Should the device vibrate on taking damage? Scales with health",
+                getValue: () => this.Config.VibrateOnDamageTaken,
+                setValue: value => this.Config.VibrateOnDamageTaken = value
+            );
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Day Start",
+                tooltip: () => "Should the device vibrate when the day starts?",
+                getValue: () => this.Config.VibrateOnDayStart,
+                setValue: value => this.Config.VibrateOnDayStart = value
+            );
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Day Ending",
+                tooltip: () => "Should the device vibrate when the day ends?",
+                getValue: () => this.Config.VibrateOnDayEnd,
+                setValue: value => this.Config.VibrateOnDayEnd = value
+            );
+            /*
+             * VIBRATION LEVELS
+             */
+            configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Vibration Levels (0-100)");
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Basic Crops and Milk",
+                tooltip: () => "How Strong should the vibration be for normal milk and crops?",
+                getValue: () => this.Config.CropAndMilkBasic,
+                setValue: value => this.Config.CropAndMilkBasic = value,
+                min: 0,
+                max: 100
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Basic Fish Pickup",
+                tooltip: () => "How Strong should the vibration be for picking up normal fish?",
+                getValue: () => this.Config.FishCollectedBasic,
+                setValue: value => this.Config.FishCollectedBasic = value,
+                min: 0,
+                max: 100
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Silver Fish, Crops and Milk",
+                tooltip: () => "How Strong should the vibration be for ALL silver fish, crops and milk?",
+                getValue: () => this.Config.SilverLevel,
+                setValue: value => this.Config.SilverLevel = value,
+                min: 0,
+                max: 100
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Gold Fish, Crops and Milk",
+                tooltip: () => "How Strong should the vibration be for ALL Gold fish, crops and milk?",
+                getValue: () => this.Config.GoldLevel,
+                setValue: value => this.Config.GoldLevel = value,
+                min: 0,
+                max: 100
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Iridium Fish, Crops and Milk",
+                tooltip: () => "How Strong should the vibration be for ALL Iridium fish, crops and milk?",
+                getValue: () => this.Config.IridiumLevel,
+                setValue: value => this.Config.IridiumLevel = value,
+                min: 0,
+                max: 100
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Stone Broken",
+                tooltip: () => "How Strong should the vibration be?",
+                getValue: () => this.Config.StoneBrokenLevel,
+                setValue: value => this.Config.StoneBrokenLevel = value,
+                min: 0,
+                max: 100
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Tree Broken",
+                tooltip: () => "How Strong should the vibration be for breaking a tree?",
+                getValue: () => this.Config.TreeBrokenLevel,
+                setValue: value => this.Config.TreeBrokenLevel = value,
+                min: 0,
+                max: 100
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Damage Taken Max",
+                tooltip: () => "How Strong should the MAX vibration be when taking damage?",
+                getValue: () => this.Config.DamageTakenMax,
+                setValue: value => this.Config.DamageTakenMax = value,
+                min: 0,
+                max: 100
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Day Start",
+                tooltip: () => "How Strong should the vibration be when the day starts?",
+                getValue: () => this.Config.DayStartLevel,
+                setValue: value => this.Config.DayStartLevel = value,
+                min: 0,
+                max: 100
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Day End",
+                tooltip: () => "How Strong should the MAX vibration be when the day ends? Min 50",
+                getValue: () => this.Config.DayEndMax,
+                setValue: value => this.Config.DayEndMax = value,
+                min: 50,
+                max: 100
+            );
         }
 
         private void OnObjectListChanged(object sender, ObjectListChangedEventArgs e)
@@ -55,7 +218,7 @@ namespace ButtplugValley
                     {
                         // Vibrate the device when a stone is present
                         //this.Monitor.Log("Stone Detected", LogLevel.Debug);
-                        buttplugManager.VibrateDevicePulse(60);
+                        buttplugManager.VibrateDevicePulse(Config.StoneBrokenLevel);
                         break;
                     }
                 }
@@ -68,12 +231,13 @@ namespace ButtplugValley
             {
                 if (!Config.VibrateOnDayEnd) return;
                 
+                var level = Config.DayEndMax;
                 this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {50} then 100.", LogLevel.Debug);
-                await buttplugManager.VibrateDevice(50);
+                await buttplugManager.VibrateDevice(level-50);
                 await Task.Delay(800);
-                await buttplugManager.VibrateDevice(80);
+                await buttplugManager.VibrateDevice(level-20);
                 await Task.Delay(400);
-                await buttplugManager.VibrateDevice(100);
+                await buttplugManager.VibrateDevice(level);
                 await Task.Delay(200);
                 await buttplugManager.VibrateDevice(0);
             });
@@ -86,7 +250,7 @@ namespace ButtplugValley
                 return;
 
             // Check if any items were removed from the inventory
-            
+            this.Monitor.Log("Adding ITEM NOW", LogLevel.Debug);
             foreach (Item item in e.Added)
             {
                 // Check if the removed item is a crop
@@ -94,23 +258,22 @@ namespace ButtplugValley
                 {
                     if (obj.Category == StardewValley.Object.FishCategory && Config.VibrateOnFishCollected)
                     {
-                        if (obj.Quality == StardewValley.Object.medQuality) buttplugManager.VibrateDevicePulse(55);
-                        else if (obj.Quality == StardewValley.Object.highQuality) buttplugManager.VibrateDevicePulse(85, 650);
-                        else if (obj.Quality == StardewValley.Object.bestQuality) buttplugManager.VibrateDevicePulse(100, 1000);
+                        if (obj.Quality == StardewValley.Object.medQuality) buttplugManager.VibrateDevicePulse(Config.SilverLevel);
+                        else if (obj.Quality == StardewValley.Object.highQuality) buttplugManager.VibrateDevicePulse(Config.GoldLevel, 650);
+                        else if (obj.Quality == StardewValley.Object.bestQuality) buttplugManager.VibrateDevicePulse(Config.IridiumLevel, 1000);
                         // Vibrate the device
-                        else buttplugManager.VibrateDevicePulse(30); // Adjust the power level as desired
+                        else buttplugManager.VibrateDevicePulse(Config.FishCollectedBasic); // Adjust the power level as desired
                         break; // Exit the loop after the first harvested crop is found
                     }
                     if (obj.Category == StardewValley.Object.VegetableCategory ||
                         obj.Category == StardewValley.Object.FruitsCategory || obj.Category == StardewValley.Object.MilkCategory )
                     {
                         if (!Config.VibrateOnCropAndMilkCollected) return;
-                        
-                        if (obj.Quality == StardewValley.Object.medQuality) buttplugManager.VibrateDevicePulse(55);
-                        else if (obj.Quality == StardewValley.Object.highQuality) buttplugManager.VibrateDevicePulse(85, 650);
-                        else if (obj.Quality == StardewValley.Object.bestQuality) buttplugManager.VibrateDevicePulse(100, 1200);
+                        if (obj.Quality == StardewValley.Object.medQuality) buttplugManager.VibrateDevicePulse(Config.SilverLevel);
+                        else if (obj.Quality == StardewValley.Object.highQuality) buttplugManager.VibrateDevicePulse(Config.GoldLevel, 650);
+                        else if (obj.Quality == StardewValley.Object.bestQuality) buttplugManager.VibrateDevicePulse(Config.IridiumLevel, 1200);
                         // Vibrate the device
-                        else buttplugManager.VibrateDevicePulse(30); // Adjust the power level as desired
+                        else buttplugManager.VibrateDevicePulse(Config.CropAndMilkBasic); // Adjust the power level as desired
                         break; // Exit the loop after the first harvested crop is found
                     }
                 }
@@ -162,7 +325,7 @@ namespace ButtplugValley
                             Task.Run(async () =>
                             {
                                 this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {80}.", LogLevel.Debug);
-                                await buttplugManager.VibrateDevice(80);
+                                await buttplugManager.VibrateDevice(Config.TreeBrokenLevel);
                                 await Task.Delay(420);
                                 await buttplugManager.VibrateDevice(0);
                             });
@@ -206,13 +369,13 @@ namespace ButtplugValley
             if (e.Button == SButton.P)
             {
                 // Stop Vibrations
-                Task.Run(async () => await buttplugManager.StopDevices());
+                //Task.Run(async () => await buttplugManager.StopDevices());
             }
             if (e.Button == SButton.I)
             {
                 Task.Run(async () =>
                 {
-                    await buttplugManager.StopDevices();
+                    //await buttplugManager.StopDevices();
                     await buttplugManager.DisconnectButtplug();
                 });
 
@@ -222,7 +385,7 @@ namespace ButtplugValley
                 // Reconnect
                 Task.Run(async () =>
                 {
-                    await buttplugManager.ConnectButtplug();
+                    await buttplugManager.ConnectButtplug(Monitor);
                 });
             }
         }
@@ -232,13 +395,13 @@ namespace ButtplugValley
             //fishingMinigame.previousCaptureLevel = 0f;
             Task.Run(async () =>
             {
-                await buttplugManager.VibrateDevice(50);
+                await buttplugManager.VibrateDevice(Config.DayStartLevel);
                 await Task.Delay(150);
                 await buttplugManager.VibrateDevice(0);
 
                 await Task.Delay(350);
 
-                await buttplugManager.VibrateDevice(50);
+                await buttplugManager.VibrateDevice(Config.DayStartLevel);
                 await Task.Delay(150);
                 await buttplugManager.VibrateDevice(0);
             });
@@ -249,7 +412,7 @@ namespace ButtplugValley
             if (Game1.player.health < previousHealth)
             {
                 if (!Config.VibrateOnDamageTaken) return;
-                float intensity = 100f * (1f - (float)Game1.player.health / (float)Game1.player.maxHealth);
+                float intensity = Config.DamageTakenMax * (1f - (float)Game1.player.health / (float)Game1.player.maxHealth);
                 intensity = Math.Min(intensity, 100f);
                 Task.Run(async () =>
                 {

@@ -18,15 +18,18 @@ I originally made this mod for my partner after discovering the lack of a buttpl
 * Vibrations on fully cutting down trees
 * Vibrations on picking up fish, crops and milk. (Scales with quality)
 * Vibrations on day end and start.
+* Vibrations on fully breaking rocks
+* Customizable vibration strength
+  * Requires the [Generic Mod Config Menu Mod](https://www.moddrop.com/stardew-valley/mods/771692-generic-mod-config-menu)
+    * Can also be found on [Nexus Mods](https://www.nexusmods.com/stardewvalley/mods/5098)
 
 ## Planned Features
-* Vibrations on fully breaking rocks
 * Fishing Minigame Vibrations
 ## FAQ
 ### What toys does this work with?
 Check Out [https://iostindex.com/](https://iostindex.com/).
 ### Is there an config?
-This shouuld be coming with the next update
+Yes, please install the [Generic Mod Config Menu Mod](https://www.moddrop.com/stardew-valley/mods/771692-generic-mod-config-menu)
 ### Can I use this in multiplayer?
 This has not been tested, but I don't see why not
 ### Does it support multiple toys at once?

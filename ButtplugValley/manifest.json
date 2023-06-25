@@ -6,5 +6,5 @@
   "UniqueID": "Salty.ButtplugValley",
   "EntryDll": "ButtplugValley.dll",
   "MinimumApiVersion": "3.0.0",
-  "UpdateKeys": []
+  "UpdateKeys": ["GitHub:DryIcedTea/Buttplug-Valley"]
 }
