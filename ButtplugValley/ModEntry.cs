@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
@@ -12,7 +12,7 @@ namespace ButtplugValley
 {
     internal sealed class ModEntry : Mod
     {
-        private OldBPManager buttplugManager;
+        private BPManager buttplugManager;
         private ModConfig Config;
         private FishingMinigame fishingMinigame;
         private bool isVibrating = false;
@@ -21,7 +21,7 @@ namespace ButtplugValley
         public override void Entry(IModHelper helper)
         {
             this.Config = this.Helper.ReadConfig<ModConfig>();
-            buttplugManager = new OldBPManager();
+            buttplugManager = new BPManager();
             fishingMinigame = new FishingMinigame(helper, Monitor, buttplugManager);
             Task.Run(async () =>
             {
