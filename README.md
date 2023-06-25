@@ -14,12 +14,12 @@ I originally made this mod for my partner after discovering the lack of a buttpl
 * `I` - Disconnect Toy and stop all vibrations
 * `K` - Reconnect Toy
 ## Features
-* Vibrations on taking damage (scales with health)
+* Vibrations on taking damage (Scales with health)
 * Vibrations on fully cutting down trees
 * Vibrations on picking up fish, crops and milk. (Scales with quality)
 * Vibrations on day end and start.
 * Vibrations on fully breaking rocks
-* Vibrations in the Fishing Minigame
+* Vibrations in the Fishing Minigame (Scales with the green capture bar)
 * Customizable vibration strength and toggles for each feature
   * Requires the [Generic Mod Config Menu Mod](https://www.moddrop.com/stardew-valley/mods/771692-generic-mod-config-menu)
     * Can also be found on [Nexus Mods](https://www.nexusmods.com/stardewvalley/mods/5098)
