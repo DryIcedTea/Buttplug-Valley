@@ -19,12 +19,12 @@ I originally made this mod for my partner after discovering the lack of a buttpl
 * Vibrations on picking up fish, crops and milk. (Scales with quality)
 * Vibrations on day end and start.
 * Vibrations on fully breaking rocks
-* Customizable vibration strength
+* Vibrations in the Fishing Minigame
+* Customizable vibration strength and toggles for each feature
   * Requires the [Generic Mod Config Menu Mod](https://www.moddrop.com/stardew-valley/mods/771692-generic-mod-config-menu)
     * Can also be found on [Nexus Mods](https://www.nexusmods.com/stardewvalley/mods/5098)
 
 ## Planned Features
-* Fishing Minigame Vibrations
 ## FAQ
 ### What toys does this work with?
 Check Out [https://iostindex.com/](https://iostindex.com/).
@@ -39,7 +39,7 @@ Maybe. Please let me know what you want to see added/changed!
 
 ## Feedback
 If you have any feedback, feel free to open an issue or contact me on discord. You'll find me in the buttplug.io discord!
-I honestly don't know what I'm doing, so feedback is **very** much appreciated. (please)
+I honestly don't know what I'm doing, so feedback is **very** much appreciated.
 
 (If you want to help me make this mod better, that would be amazing and very much appreciated! This is very much a hobby project, so I don't know how often updates will come out. Apologies in advance for the bad code.)
 
