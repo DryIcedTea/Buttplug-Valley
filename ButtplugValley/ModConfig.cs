@@ -13,7 +13,7 @@
         public bool VibrateOnFishingMinigame { get; set; } = true;
         
         
-        public int StoneBrokenLevel { get; set; } = 60;
+        public int StoneBrokenLevel { get; set; } = 35;
         public int DamageTakenMax { get; set; } = 100;
         public int FishCollectedBasic { get; set; } = 30;
         public int CropAndMilkBasic { get; set; } = 30;
