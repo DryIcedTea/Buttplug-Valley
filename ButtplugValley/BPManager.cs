@@ -66,7 +66,22 @@ namespace ButtplugValley
 
         private bool HasVibrators()
         {
-            return client.Devices.Any(device => device.VibrateAttributes.Count > 0);
+            if (!client.Connected)
+            {
+                // Noop, this ends up being way too spammy if someone is playing with the mod installed but not connected.
+                return false;
+            }
+            else if (client.Devices.Count() == 0)
+            {
+                monitor.Log("Either buttplug is not connected or no devices are available");
+                return false;
+            }
+            else if (!client.Devices.Any(device => device.VibrateAttributes.Count > 0))
+            {
+                monitor.Log("No connected devices have vibrators available.", LogLevel.Warn);
+                return false;
+            }
+            return true;
         }
 
         public async Task VibrateDevice(float level)
@@ -74,7 +89,6 @@ namespace ButtplugValley
             // This implicited works as a Connected check, as Buttplug clears the device list on disconnect.
             if (!HasVibrators())
             {
-                this.monitor.Log("Has vibrators failed", LogLevel.Debug);
                 return;
             }
             float intensity = MathHelper.Clamp(level, 0f, 100f) / 100f;
@@ -99,7 +113,6 @@ namespace ButtplugValley
         {
             if (!HasVibrators())
             {
-                this.monitor.Log("Has vibrators failed", LogLevel.Debug);
                 return;
             }
             float intensity = MathHelper.Clamp(level, 0f, 100f) / 100f;
