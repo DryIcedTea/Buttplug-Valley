@@ -1,4 +1,4 @@
-using Buttplug.Client;
+﻿using Buttplug.Client;
 using Buttplug.Client.Connectors.WebsocketConnector;
 using System;
 using System.Linq;
@@ -19,10 +19,13 @@ namespace ButtplugValley
             // If we're not connected, don't even run
             if (!client.Connected)
             {
+                monitor.Log("Buttplug not connected, cannot scan for devices", LogLevel.Debug);
                 return;
             }
+            monitor.Log("Scanning for devices", LogLevel.Info);
             await client.StartScanningAsync();
             await Task.Delay(30000);
+            monitor.Log("Stopping scanning for devices", LogLevel.Info);
             await client.StopScanningAsync();
         }
         public async Task ConnectButtplug(IMonitor meMonitor)
@@ -31,11 +34,18 @@ namespace ButtplugValley
             // Don't stomp our client if it's already connected.
             if (client.Connected)
             {
+                monitor.Log("Buttplug already connected, skipping", LogLevel.Debug);
                 return;
             }
+            monitor.Log("Buttplug Client Connecting", LogLevel.Info);
             client.Dispose();
             client = new ButtplugClient("ButtplugValley");
             await client.ConnectAsync(new ButtplugWebsocketConnector(new Uri("ws://localhost:12345")));
+            monitor.Log($"{client.Devices.Count()} devices found on startup.", LogLevel.Info);
+            foreach (var device in client.Devices)
+            {
+                monitor.Log($"- {device.Name} ({device.DisplayName} : {device.Index})", LogLevel.Info);
+            }
             client.DeviceAdded += HandleDeviceAdded;
             client.DeviceRemoved += HandleDeviceRemoved;
             client.ServerDisconnect += (object o, EventArgs e) => monitor.Log("Intiface Server disconnected.", LogLevel.Warn);
@@ -48,8 +58,10 @@ namespace ButtplugValley
             // Doesn't *really* matter but saves an extra exception from being thrown.
             if (!client.Connected)
             {
+                monitor.Log("Buttplug not connected, skipping", LogLevel.Debug);
                 return;
             }
+            monitor.Log("Disconnecting Buttplug Client", LogLevel.Info);
             // Disconnect from the buttplug.io server
             await client.DisconnectAsync();
         }
@@ -96,8 +108,12 @@ namespace ButtplugValley
             {
                 if (device.VibrateAttributes.Count > 0)
                 {
-                    this.monitor.Log($"Vibrating at {intensity}", LogLevel.Debug);
+                    monitor.Log($"Vibrating at {intensity}", LogLevel.Trace);
                     await device.VibrateAsync(intensity);
+                }
+                else
+                {
+                    monitor.Log($"No vibrators on device {device.Name}", LogLevel.Trace);
                 }
             }
         }
@@ -123,10 +139,6 @@ namespace ButtplugValley
 
         public async Task StopDevices()
         {
-            if (!client.Connected)
-            {
-                return;
-            }
             // Once Buttplug C# v3.0.1 is out, just use this line.
             // 
             // await client.StopAllDevicesAsync();
