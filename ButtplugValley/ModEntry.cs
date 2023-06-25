@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
@@ -386,7 +386,7 @@ namespace ButtplugValley
             if (e.Button == SButton.P)
             {
                 // Stop Vibrations
-                //Task.Run(async () => await buttplugManager.StopDevices());
+                Task.Run(async () => await buttplugManager.StopDevices());
             }
             if (e.Button == SButton.I)
             {
@@ -403,6 +403,7 @@ namespace ButtplugValley
                 Task.Run(async () =>
                 {
                     await buttplugManager.ConnectButtplug(Monitor);
+                    await buttplugManager.ScanForDevices();
                 });
             }
         }
