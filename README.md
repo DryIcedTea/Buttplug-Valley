@@ -25,6 +25,8 @@ I originally made this mod for my partner after discovering the lack of a buttpl
     * Can also be found on [Nexus Mods](https://www.nexusmods.com/stardewvalley/mods/5098)
 
 ## Planned Features
+* Vibrations on breaking large rocks and stumps
+* Suggestions are more than welcome!
 ## FAQ
 ### What toys does this work with?
 Check Out [https://iostindex.com/](https://iostindex.com/).
