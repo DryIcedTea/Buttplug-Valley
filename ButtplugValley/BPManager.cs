@@ -63,7 +63,6 @@ namespace ButtplugValley
 
         public async Task VibrateDevice(float level)
         {
-            this.monitor.Log("Vibrate Device Called", LogLevel.Debug);
             // This implicited works as a Connected check, as Buttplug clears the device list on disconnect.
             if (!HasVibrators())
             {
@@ -75,7 +74,7 @@ namespace ButtplugValley
             {
                 if (device.VibrateAttributes.Count > 0)
                 {
-                    this.monitor.Log("VibrateAsync", LogLevel.Debug);
+                    this.monitor.Log($"Vibrating at {intensity}", LogLevel.Debug);
                     await device.VibrateAsync(intensity);
                 }
             }

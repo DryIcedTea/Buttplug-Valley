@@ -45,7 +45,6 @@ namespace ButtplugValley
         }
         public async Task VibrateDevice(float level)
         {
-            this.monitor.Log("TEST VIBRATION GO GO GO", LogLevel.Debug);
             float intensity = MathHelper.Clamp(level, 0f, 100f) / 100f;
             if (this.client.Devices.Any())
             {
@@ -56,7 +55,6 @@ namespace ButtplugValley
         //Short Vibration pulse. Intensity from 1-100
         public async Task VibrateDevicePulse(float level)
         {
-            this.monitor.Log("TEST VIBRATION GO GO GO", LogLevel.Debug);
             float intensity = MathHelper.Clamp(level, 0f, 100f) / 100f;
             if (this.client.Devices.Any())
             {
@@ -66,10 +64,9 @@ namespace ButtplugValley
                 await device.VibrateAsync(0);
             }
         }
-        //Vibration with customizable duration. Intensity from 1-100
+        //Vibration with customizable duration. Intensity from 0-100
         public async Task VibrateDevicePulse(float level, int duration)
         {
-            this.monitor.Log("TEST VIBRATION GO GO GO", LogLevel.Debug);
             float intensity = MathHelper.Clamp(level, 0f, 100f) / 100f;
             if (this.client.Devices.Any())
             {
@@ -80,7 +77,5 @@ namespace ButtplugValley
             }
         }
         
-
-        // Add other methods and event handlers as needed
     }
 }

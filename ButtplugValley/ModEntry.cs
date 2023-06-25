@@ -14,7 +14,7 @@ namespace ButtplugValley
     {
         private OldBPManager buttplugManager;
         private ModConfig Config;
-        //private FishingMinigame fishingMinigame;
+        private FishingMinigame fishingMinigame;
         private bool isVibrating = false;
         private int previousHealth;
 
@@ -22,11 +22,12 @@ namespace ButtplugValley
         {
             this.Config = this.Helper.ReadConfig<ModConfig>();
             buttplugManager = new OldBPManager();
+            fishingMinigame = new FishingMinigame(helper, Monitor, buttplugManager);
             Task.Run(async () =>
             {
                 await buttplugManager.ConnectButtplug(Monitor);
                 await buttplugManager.ScanForDevices();
-                //fishingMinigame = new FishingMinigame(helper);
+                
             });
 
             helper.Events.Input.ButtonPressed += OnButtonPressed;
