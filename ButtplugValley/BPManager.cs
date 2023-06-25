@@ -1,4 +1,4 @@
-﻿using Buttplug.Client;
+using Buttplug.Client;
 using Buttplug.Client.Connectors.WebsocketConnector;
 using System;
 using System.Linq;
@@ -37,6 +37,9 @@ namespace ButtplugValley
             client = new ButtplugClient("ButtplugValley");
             await client.ConnectAsync(new ButtplugWebsocketConnector(new Uri("ws://localhost:12345")));
             client.DeviceAdded += HandleDeviceAdded;
+            client.DeviceRemoved += HandleDeviceRemoved;
+            client.ServerDisconnect += (object o, EventArgs e) => monitor.Log("Intiface Server disconnected.", LogLevel.Warn);
+            monitor.Log("Buttplug Client Connected", LogLevel.Info);
             // Add other event handlers as needed
         }
 
@@ -53,9 +56,14 @@ namespace ButtplugValley
 
         private void HandleDeviceAdded(object sender, DeviceAddedEventArgs e)
         {
-            Console.WriteLine($"Device connected: {e.Device.Name}");
+            monitor.Log($"Buttplug Device {e.Device.Name} ({e.Device.DisplayName} : {e.Device.Index}) Added", LogLevel.Info);
         }
-        
+
+        private void HandleDeviceRemoved(object sender, DeviceRemovedEventArgs e)
+        {
+            monitor.Log($"Buttplug Device {e.Device.Name} ({e.Device.DisplayName} : {e.Device.Index}) Removed", LogLevel.Info);
+        }
+
         private bool HasVibrators()
         {
             return client.Devices.Any(device => device.VibrateAttributes.Count > 0);
