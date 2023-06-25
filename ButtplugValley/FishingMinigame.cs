@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewModdingAPI.Utilities;
@@ -13,6 +14,10 @@ namespace ButtplugValley
         public float previousCaptureLevel;
         private OldBPManager _bpManager;
         private IMonitor monitor;
+        public bool isActive = true;
+        
+        
+        public float maxVibration = 100f; // Adjust as desired
 
         public FishingMinigame(IModHelper modHelper, IMonitor MeMonitor, OldBPManager MEbpManager)
         {
@@ -44,7 +49,7 @@ namespace ButtplugValley
             if (Game1.activeClickableMenu is StardewValley.Menus.BobberBar menu)
             {
                 monitor.Log("FishingMinigameIsActive", LogLevel.Debug);
-        
+
                 // Get the distanceFromCatching field using reflection
                 IReflectedField<float> distanceFromCatchingField = this.reflectionHelper.GetField<float>(menu, "distanceFromCatching");
 
@@ -57,18 +62,32 @@ namespace ButtplugValley
                 float captureLevel = distanceFromCatchingField.GetValue();
                 monitor.Log($"distancefrom {captureLevel}", LogLevel.Debug);
 
-                // Convert capture level to percentage
-                float capturePercentage = captureLevel * 100f;
+                // Scale the capture level based on the maximum vibration value
+                float scaledCaptureLevel = captureLevel * maxVibration / 100f;
+
+                // Ensure the scaled capture level does not exceed the maximum vibration value
+                float capturePercentage = Math.Min(scaledCaptureLevel, maxVibration);
 
                 // Vibrate the device based on the capture percentage if it has changed
                 if (capturePercentage != previousCaptureLevel)
                 {
-                    monitor.Log($"Vibrating at {capturePercentage}", LogLevel.Debug);
-                    _bpManager.VibrateDevice(capturePercentage);
+                    monitor.Log($"Vibrating at {capturePercentage*100f}", LogLevel.Debug);
+                    _bpManager.VibrateDevice(capturePercentage*100f);
                     previousCaptureLevel = capturePercentage;
                 }
             }
+            else
+            {
+                // The bobber bar menu is no longer active, stop vibrating the device
+                if (previousCaptureLevel > 0)
+                {
+                    monitor.Log("Stopping device vibration", LogLevel.Debug);
+                    _bpManager.VibrateDevice(0);
+                    previousCaptureLevel = 0;
+                }
+            }
         }
+
 
 
         private void OnDayStarted(object sender, DayStartedEventArgs e)

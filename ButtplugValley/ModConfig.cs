@@ -10,6 +10,8 @@
         public bool VibrateOnDayStart { get; set; } = true;
         public bool VibrateOnDayEnd { get; set; } = true;
         
+        public bool VibrateOnFishingMinigame { get; set; } = true;
+        
         
         public int StoneBrokenLevel { get; set; } = 60;
         public int DamageTakenMax { get; set; } = 100;
@@ -21,5 +23,6 @@
         public int TreeBrokenLevel { get; set; } = 80;
         public int DayStartLevel { get; set; } = 50;
         public int DayEndMax { get; set; } = 100;
+        public int MaxFishingVibration { get; set; } = 100;
     }
 }

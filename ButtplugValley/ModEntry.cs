@@ -106,6 +106,13 @@ namespace ButtplugValley
                 getValue: () => this.Config.VibrateOnDayEnd,
                 setValue: value => this.Config.VibrateOnDayEnd = value
             );
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "FishingMinigame",
+                tooltip: () => "Should the device vibrate in the fishing minigame? Scales with the capture bar",
+                getValue: () => this.Config.VibrateOnFishingMinigame,
+                setValue: value => this.Config.VibrateOnFishingMinigame = value
+            );
             /*
              * VIBRATION LEVELS
              */
@@ -198,6 +205,15 @@ namespace ButtplugValley
                 getValue: () => this.Config.DayEndMax,
                 setValue: value => this.Config.DayEndMax = value,
                 min: 50,
+                max: 100
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Fishing Minigame",
+                tooltip: () => "How Strong should the MAX vibration be in the fishing minigame?",
+                getValue: () => this.Config.MaxFishingVibration,
+                setValue: value => this.Config.MaxFishingVibration = value,
+                min: 0,
                 max: 100
             );
         }
@@ -409,6 +425,8 @@ namespace ButtplugValley
         }
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
+            fishingMinigame.isActive = Config.VibrateOnFishingMinigame;
+            fishingMinigame.maxVibration = Config.MaxFishingVibration;
             // Check if the player's health has decreased since the last tick
             if (Game1.player.health < previousHealth)
             {
