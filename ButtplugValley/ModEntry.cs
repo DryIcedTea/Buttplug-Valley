@@ -12,7 +12,7 @@ namespace ButtplugValley
 {
     internal sealed class ModEntry : Mod
     {
-        private OldBPManager buttplugManager;
+        private BPManager buttplugManager;
         private ModConfig Config;
         private FishingMinigame fishingMinigame;
         private bool isVibrating = false;
@@ -21,7 +21,7 @@ namespace ButtplugValley
         public override void Entry(IModHelper helper)
         {
             this.Config = this.Helper.ReadConfig<ModConfig>();
-            buttplugManager = new OldBPManager();
+            buttplugManager = new BPManager();
             fishingMinigame = new FishingMinigame(helper, Monitor, buttplugManager);
             Task.Run(async () =>
             {
@@ -386,7 +386,7 @@ namespace ButtplugValley
             if (e.Button == SButton.P)
             {
                 // Stop Vibrations
-                //Task.Run(async () => await buttplugManager.StopDevices());
+                Task.Run(async () => await buttplugManager.StopDevices());
             }
             if (e.Button == SButton.I)
             {
@@ -403,6 +403,7 @@ namespace ButtplugValley
                 Task.Run(async () =>
                 {
                     await buttplugManager.ConnectButtplug(Monitor);
+                    await buttplugManager.ScanForDevices();
                 });
             }
         }

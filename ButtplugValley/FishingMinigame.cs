@@ -12,14 +12,14 @@ namespace ButtplugValley
         private IModHelper helper;
         private IReflectionHelper reflectionHelper;
         public float previousCaptureLevel;
-        private OldBPManager _bpManager;
+        private BPManager _bpManager;
         private IMonitor monitor;
         public bool isActive = true;
         
         
         public float maxVibration = 100f; // Adjust as desired
 
-        public FishingMinigame(IModHelper modHelper, IMonitor MeMonitor, OldBPManager MEbpManager)
+        public FishingMinigame(IModHelper modHelper, IMonitor MeMonitor, BPManager MEbpManager)
         {
             helper = modHelper;
             monitor = MeMonitor;
