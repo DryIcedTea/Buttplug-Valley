@@ -63,7 +63,7 @@ namespace ButtplugValley
                 monitor.Log($"distancefrom {captureLevel}", LogLevel.Debug);
 
                 // Scale the capture level based on the maximum vibration value
-                float scaledCaptureLevel = captureLevel * maxVibration / 100f;
+                float scaledCaptureLevel = captureLevel * maxVibration;
 
                 // Ensure the scaled capture level does not exceed the maximum vibration value
                 float capturePercentage = Math.Min(scaledCaptureLevel, maxVibration);
@@ -71,8 +71,8 @@ namespace ButtplugValley
                 // Vibrate the device based on the capture percentage if it has changed
                 if (capturePercentage != previousCaptureLevel)
                 {
-                    monitor.Log($"Vibrating at {capturePercentage*100f}", LogLevel.Debug);
-                    _bpManager.VibrateDevice(capturePercentage*100f);
+                    monitor.Log($"FISHINGMINIGAME {capturePercentage}", LogLevel.Debug);
+                    _bpManager.VibrateDevice(capturePercentage);
                     previousCaptureLevel = capturePercentage;
                 }
             }

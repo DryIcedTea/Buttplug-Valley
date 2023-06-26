@@ -131,7 +131,9 @@ namespace ButtplugValley
             {
                 return;
             }
-            float intensity = MathHelper.Clamp(level, 0f, 100f) / 100f;
+            
+            float intensity = MathHelper.Clamp(level, 0f, 100f);
+            monitor.Log($"VibrateDevicePulse {intensity}", LogLevel.Trace);
             await VibrateDevice(intensity);
             await Task.Delay(duration);
             await VibrateDevice(0);

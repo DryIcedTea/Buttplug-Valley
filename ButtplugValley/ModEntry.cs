@@ -235,7 +235,7 @@ namespace ButtplugValley
                     {
                         // Vibrate the device when a stone is present
                         //this.Monitor.Log("Stone Detected", LogLevel.Debug);
-                        buttplugManager.VibrateDevicePulse(Config.StoneBrokenLevel);
+                        Task.Run(async () => { await buttplugManager.VibrateDevicePulse(Config.StoneBrokenLevel); });
                         break;
                     }
                 }
@@ -267,14 +267,15 @@ namespace ButtplugValley
                 return;
 
             // Check if any items were removed from the inventory
-            this.Monitor.Log("Adding ITEM NOW", LogLevel.Debug);
             foreach (Item item in e.Added)
             {
                 // Check if the removed item is a crop
                 if (item is StardewValley.Object obj)
                 {
+                    
                     if (obj.Category == StardewValley.Object.FishCategory && Config.VibrateOnFishCollected)
                     {
+                        this.Monitor.Log("Fish", LogLevel.Debug);
                         if (obj.Quality == StardewValley.Object.medQuality) buttplugManager.VibrateDevicePulse(Config.SilverLevel);
                         else if (obj.Quality == StardewValley.Object.highQuality) buttplugManager.VibrateDevicePulse(Config.GoldLevel, 650);
                         else if (obj.Quality == StardewValley.Object.bestQuality) buttplugManager.VibrateDevicePulse(Config.IridiumLevel, 1000);
@@ -285,7 +286,9 @@ namespace ButtplugValley
                     if (obj.Category == StardewValley.Object.VegetableCategory ||
                         obj.Category == StardewValley.Object.FruitsCategory || obj.Category == StardewValley.Object.MilkCategory )
                     {
+                        
                         if (!Config.VibrateOnCropAndMilkCollected) return;
+                        this.Monitor.Log("Vegetable", LogLevel.Debug);
                         if (obj.Quality == StardewValley.Object.medQuality) buttplugManager.VibrateDevicePulse(Config.SilverLevel);
                         else if (obj.Quality == StardewValley.Object.highQuality) buttplugManager.VibrateDevicePulse(Config.GoldLevel, 650);
                         else if (obj.Quality == StardewValley.Object.bestQuality) buttplugManager.VibrateDevicePulse(Config.IridiumLevel, 1200);
@@ -432,11 +435,11 @@ namespace ButtplugValley
             if (Game1.player.health < previousHealth)
             {
                 if (!Config.VibrateOnDamageTaken) return;
-                float intensity = Config.DamageTakenMax * (1f - (float)Game1.player.health / (float)Game1.player.maxHealth);
+                float intensity = (Config.DamageTakenMax * (1f - (float)Game1.player.health / (float)Game1.player.maxHealth));
                 intensity = Math.Min(intensity, 100f);
                 Task.Run(async () =>
                 {
-                    this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {intensity}.", LogLevel.Debug);
+                    this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {intensity}.", LogLevel.Trace);
                     await buttplugManager.VibrateDevice(intensity);
                     await Task.Delay(380);
                     await buttplugManager.VibrateDevice(0);

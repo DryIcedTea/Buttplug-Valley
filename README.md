@@ -45,3 +45,5 @@ I honestly don't know what I'm doing, so feedback is **very** much appreciated.
 
 (If you want to help me make this mod better, that would be amazing and very much appreciated! This is very much a hobby project, so I don't know how often updates will come out. Apologies in advance for the bad code.)
 
+## Special thanks
+* qdot for making buttplug.io and helping me with some of the code.
