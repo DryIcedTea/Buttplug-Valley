@@ -1,4 +1,6 @@
-﻿namespace ButtplugValley
+﻿using StardewModdingAPI;
+
+namespace ButtplugValley
 {
     public sealed class ModConfig
     {
@@ -24,6 +26,10 @@
         public int DayStartLevel { get; set; } = 50;
         public int DayEndMax { get; set; } = 100;
         public int MaxFishingVibration { get; set; } = 100;
+        
+        public SButton StopVibrations { get; set; } = SButton.P;
+        public SButton DisconnectButtplug { get; set; } = SButton.I;
+        public SButton ReconnectButtplug { get; set; } = SButton.K;
 
         public string IntifaceIP { get; set; } = "localhost:12345";
     }

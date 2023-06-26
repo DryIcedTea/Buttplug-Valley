@@ -216,11 +216,34 @@ namespace ButtplugValley
                 min: 0,
                 max: 100
             );
+            configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Keybinds");
+            configMenu.AddKeybind(
+                mod: this.ModManifest,
+                name: () => "Stop Vibrations",
+                tooltip: () => "Stops all ongoing vibrations",
+                getValue: () => this.Config.StopVibrations,
+                setValue: value => this.Config.StopVibrations = value
+            );
+            configMenu.AddKeybind(
+                mod: this.ModManifest,
+                name: () => "Disconnect",
+                tooltip: () => "Disconnects the game from intiface",
+                getValue: () => this.Config.DisconnectButtplug,
+                setValue: value => this.Config.DisconnectButtplug = value
+            );
+            configMenu.AddKeybind(
+                mod: this.ModManifest,
+                name: () => "Reconnect",
+                tooltip: () => "Reconnects the game to intiface",
+                getValue: () => this.Config.ReconnectButtplug,
+                setValue: value => this.Config.ReconnectButtplug = value
+            );
+            
             /*
              * Intiface Connection
              */
             configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Edit IP");
-            configMenu.AddParagraph(mod:this.ModManifest, text: () => "Press K after saving to reconnect. Ignore this if you don't know what this is.");
+            configMenu.AddParagraph(mod:this.ModManifest, text: () => "Press the Reconnect keybind after saving to reconnect. Ignore this if you don't know what this is.");
             configMenu.AddTextOption(
                 mod: this.ModManifest,
                 name: () => "Intiface IP",
@@ -398,12 +421,12 @@ namespace ButtplugValley
                 isVibrating = !isVibrating;
                 buttplugManager.VibrateDevice(isVibrating ? 100 : 0);
             }*/
-            if (e.Button == SButton.P)
+            if (e.Button == Config.StopVibrations)
             {
                 // Stop Vibrations
                 Task.Run(async () => await buttplugManager.StopDevices());
             }
-            if (e.Button == SButton.I)
+            if (e.Button == Config.DisconnectButtplug)
             {
                 Task.Run(async () =>
                 {
@@ -412,7 +435,7 @@ namespace ButtplugValley
                 });
 
             }
-            if (e.Button == SButton.K)
+            if (e.Button == Config.ReconnectButtplug)
             {
                 // Reconnect
                 Task.Run(async () =>
