@@ -121,7 +121,7 @@ namespace ButtplugValley
         //Short Vibration pulse. Intensity from 1-100
         public async Task VibrateDevicePulse(float level)
         {
-            await VibrateDevicePulse(level, 380);
+            await VibrateDevicePulse(level, 400);
         }
 
         //Vibration with customizable duration. Intensity from 1-100
