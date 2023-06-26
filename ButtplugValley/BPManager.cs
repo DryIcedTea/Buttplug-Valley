@@ -12,6 +12,7 @@ namespace ButtplugValley
     {
         private ButtplugClient client = new ButtplugClient("ButtplugValley");
         private ModEntry _modEntry;
+        private string _intifaceIP;
         private IMonitor monitor;
 
         public async Task ScanForDevices()
@@ -28,9 +29,10 @@ namespace ButtplugValley
             monitor.Log("Stopping scanning for devices", LogLevel.Info);
             await client.StopScanningAsync();
         }
-        public async Task ConnectButtplug(IMonitor meMonitor)
+        public async Task ConnectButtplug(IMonitor meMonitor, string meIntifaceIP)
         {
             monitor = meMonitor;
+            _intifaceIP = meIntifaceIP;
             // Don't stomp our client if it's already connected.
             if (client.Connected)
             {
@@ -40,7 +42,8 @@ namespace ButtplugValley
             monitor.Log("Buttplug Client Connecting", LogLevel.Info);
             client.Dispose();
             client = new ButtplugClient("ButtplugValley");
-            await client.ConnectAsync(new ButtplugWebsocketConnector(new Uri("ws://localhost:12345")));
+            await client.ConnectAsync(new ButtplugWebsocketConnector(new Uri($"ws://{_intifaceIP}")));
+            monitor.Log($"Connecting to {_intifaceIP}", LogLevel.Debug);
             monitor.Log($"{client.Devices.Count()} devices found on startup.", LogLevel.Info);
             foreach (var device in client.Devices)
             {
