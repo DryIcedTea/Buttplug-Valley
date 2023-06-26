@@ -24,5 +24,7 @@
         public int DayStartLevel { get; set; } = 50;
         public int DayEndMax { get; set; } = 100;
         public int MaxFishingVibration { get; set; } = 100;
+
+        public string IntifaceIP { get; set; } = "localhost:12345";
     }
 }

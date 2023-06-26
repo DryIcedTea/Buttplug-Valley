@@ -25,7 +25,7 @@ namespace ButtplugValley
             fishingMinigame = new FishingMinigame(helper, Monitor, buttplugManager);
             Task.Run(async () =>
             {
-                await buttplugManager.ConnectButtplug(Monitor);
+                await buttplugManager.ConnectButtplug(Monitor, Config.IntifaceIP);
                 await buttplugManager.ScanForDevices();
                 
             });
@@ -216,6 +216,18 @@ namespace ButtplugValley
                 min: 0,
                 max: 100
             );
+            /*
+             * Intiface Connection
+             */
+            configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Edit IP");
+            configMenu.AddParagraph(mod:this.ModManifest, text: () => "Press K after saving to reconnect. Ignore this if you don't know what this is.");
+            configMenu.AddTextOption(
+                mod: this.ModManifest,
+                name: () => "Intiface IP",
+                tooltip: () => "The address used to connect to intiface. Leave default if you don't know what this is",
+                getValue: () => this.Config.IntifaceIP,
+                setValue: value => this.Config.IntifaceIP = value
+            );
         }
 
         private void OnObjectListChanged(object sender, ObjectListChangedEventArgs e)
@@ -405,7 +417,8 @@ namespace ButtplugValley
                 // Reconnect
                 Task.Run(async () =>
                 {
-                    await buttplugManager.ConnectButtplug(Monitor);
+                    await buttplugManager.DisconnectButtplug();
+                    await buttplugManager.ConnectButtplug(Monitor, Config.IntifaceIP);
                     await buttplugManager.ScanForDevices();
                 });
             }
