@@ -10,7 +10,7 @@ This mod allows you to connect your Buttplug.io compatible toys to Stardew Valle
 3. Install the [Buttplug Valley Mod](https://github.com/DryIcedTea/Buttplug-Valley/releases) and place it in your Stardew Valley Mods folder.
 4. (Optional) Install the [Generic Mod Config Menu Mod](https://www.moddrop.com/stardew-valley/mods/771692-generic-mod-config-menu) to customize your experience. Can also be found on [Nexus Mods](https://www.nexusmods.com/stardewvalley/mods/5098)
 
-## Keybinds
+## Default Keybinds
 * `P` - Stop Vibration
 * `I` - Disconnect Toy and stop all vibrations
 * `K` - Reconnect Toy
@@ -27,6 +27,7 @@ This mod allows you to connect your Buttplug.io compatible toys to Stardew Valle
 
 ## Planned Features
 * Vibrations on breaking large rocks and stumps
+* Vibrations on killing monsters
 * Suggestions are more than welcome!
 ## FAQ
 ### What toys does this work with?
@@ -39,7 +40,7 @@ Yes!
 Maybe. Please let me know what you want to see added/changed!
 
 ## Feedback
-If you have any feedback, feel free to open an issue, [tweet](https://twitter.com/DryIcedMatcha) at me or message me on discord. You'll find me in the buttplug.io discord!
+If you have any feedback, feel free to open an issue, [tweet](https://twitter.com/DryIcedMatcha) at me or message me on discord. You'll find me in the [buttplug.io discord](https://discord.buttplug.io/)!
 I honestly don't know what I'm doing, so feedback is **very** much appreciated.
 
 
