@@ -18,6 +18,7 @@ namespace ButtplugValley
         private FishingMinigame fishingMinigame;
         private bool isVibrating = false;
         private int previousHealth;
+        private int _levelUps;
 
         public override void Entry(IModHelper helper)
         {
@@ -40,6 +41,18 @@ namespace ButtplugValley
             helper.Events.Player.InventoryChanged += OnInventoryChanged;
             helper.Events.GameLoop.GameLaunched += OnGameLaunched;
             helper.Events.World.NpcListChanged += OnNpcListChanged;
+            helper.Events.Player.LevelChanged += OnLevelChanged;
+        }
+
+        private void OnLevelChanged(object sender, LevelChangedEventArgs e)
+        {
+            if (e.IsLocalPlayer)
+            {
+                if (e.NewLevel > e.OldLevel)
+                {
+                    _levelUps++;
+                }
+            }
         }
 
         private void OnNpcListChanged(object sender, NpcListChangedEventArgs e)
@@ -308,9 +321,12 @@ namespace ButtplugValley
                 destroyedStoneCount += destroyedStones.Count;
                 //print the count
                 this.Monitor.Log($"DESTROYED {destroyedStoneCount} STONES", LogLevel.Debug);
+                double durationmath = 3920 / (1 + (10 * Math.Exp(-0.16 * destroyedStoneCount)));
+                int duration = Convert.ToInt32(durationmath);
 
                 // Vibrate the device
-                buttplugManager.VibrateDevicePulse(Config.StoneBrokenLevel);
+                this.Monitor.Log($"VIBRATING FOR {duration} milliseconds", LogLevel.Debug);
+                buttplugManager.VibrateDevicePulse(Config.StoneBrokenLevel, duration);
             }
         }
 
@@ -323,11 +339,11 @@ namespace ButtplugValley
                 var level = Config.DayEndMax;
                 this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {50} then 100.", LogLevel.Trace);
                 await buttplugManager.VibrateDevice(level-50);
-                await Task.Delay(800);
+                await Task.Delay(800 + (500*_levelUps));
                 await buttplugManager.VibrateDevice(level-20);
-                await Task.Delay(400);
+                await Task.Delay(400 + (250*_levelUps));
                 await buttplugManager.VibrateDevice(level);
-                await Task.Delay(200);
+                await Task.Delay(200 + (125*_levelUps));
                 await buttplugManager.VibrateDevice(0);
             });
             
@@ -485,6 +501,7 @@ namespace ButtplugValley
         }
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
+            _levelUps = 0;
             if (!Config.VibrateOnDayStart) return;
             //fishingMinigame.previousCaptureLevel = 0f;
             Task.Run(async () =>
