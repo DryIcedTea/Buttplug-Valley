@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
@@ -38,6 +39,25 @@ namespace ButtplugValley
             helper.Events.World.ObjectListChanged += OnObjectListChanged;
             helper.Events.Player.InventoryChanged += OnInventoryChanged;
             helper.Events.GameLoop.GameLaunched += OnGameLaunched;
+            helper.Events.World.NpcListChanged += OnNpcListChanged;
+        }
+
+        private void OnNpcListChanged(object sender, NpcListChangedEventArgs e)
+        {
+            // Get the defeated monsters from the removed NPCs
+            var defeatedMonsters = e.Removed.Where(npc => npc.IsMonster).ToList();
+            var defeatedEnemyCount = 0;
+            
+            if (defeatedMonsters.Any())
+            {
+                // Increment the defeated enemy count
+                defeatedEnemyCount += defeatedMonsters.Count;
+                Monitor.Log($"Defeated {defeatedEnemyCount} enemies", LogLevel.Debug);
+                
+
+                // Vibrate the device
+                buttplugManager.VibrateDevicePulse(30); // Adjust the power level as desired
+            }
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -284,7 +304,7 @@ namespace ButtplugValley
                 if (!Config.VibrateOnDayEnd) return;
                 
                 var level = Config.DayEndMax;
-                this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {50} then 100.", LogLevel.Debug);
+                this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {50} then 100.", LogLevel.Trace);
                 await buttplugManager.VibrateDevice(level-50);
                 await Task.Delay(800);
                 await buttplugManager.VibrateDevice(level-20);
