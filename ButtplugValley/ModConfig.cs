@@ -6,6 +6,8 @@ namespace ButtplugValley
     {
         public bool VibrateOnStoneBroken { get; set; } = true;
         public bool VibrateOnDamageTaken { get; set; } = true;
+        
+        public bool VibrateOnEnemyKilled { get; set; } = true;
         public bool VibrateOnFishCollected { get; set; } = true;
         public bool VibrateOnCropAndMilkCollected { get; set; } = true;
         public bool VibrateOnTreeBroken { get; set; } = true;
@@ -17,6 +19,8 @@ namespace ButtplugValley
         
         public int StoneBrokenLevel { get; set; } = 35;
         public int DamageTakenMax { get; set; } = 100;
+        
+        public int EnemyKilledLevel { get; set; } = 35;
         public int FishCollectedBasic { get; set; } = 30;
         public int CropAndMilkBasic { get; set; } = 30;
         public int SilverLevel { get; set; } = 55;

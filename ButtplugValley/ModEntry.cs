@@ -48,7 +48,7 @@ namespace ButtplugValley
             var defeatedMonsters = e.Removed.Where(npc => npc.IsMonster).ToList();
             var defeatedEnemyCount = 0;
             
-            if (defeatedMonsters.Any())
+            if (defeatedMonsters.Any() && Config.VibrateOnEnemyKilled)
             {
                 // Increment the defeated enemy count
                 defeatedEnemyCount += defeatedMonsters.Count;
@@ -56,7 +56,7 @@ namespace ButtplugValley
                 
 
                 // Vibrate the device
-                buttplugManager.VibrateDevicePulse(30); // Adjust the power level as desired
+                buttplugManager.VibrateDevicePulse(Config.EnemyKilledLevel, 400*defeatedEnemyCount);
             }
         }
 
@@ -111,6 +111,13 @@ namespace ButtplugValley
                 tooltip: () => "Should the device vibrate on taking damage? Scales with health",
                 getValue: () => this.Config.VibrateOnDamageTaken,
                 setValue: value => this.Config.VibrateOnDamageTaken = value
+            );
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Enemy Killed",
+                tooltip: () => "Should the device vibrate on killing an enemy? Scales with enemies killed at once.",
+                getValue: () => this.Config.VibrateOnEnemyKilled,
+                setValue: value => this.Config.VibrateOnEnemyKilled = value
             );
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
@@ -211,6 +218,15 @@ namespace ButtplugValley
             );
             configMenu.AddNumberOption(
                 mod: this.ModManifest,
+                name: () => "Enemy Killed",
+                tooltip: () => "How Strong should the vibration be when killing an enemy?",
+                getValue: () => this.Config.EnemyKilledLevel,
+                setValue: value => this.Config.EnemyKilledLevel = value,
+                min: 0,
+                max: 100
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
                 name: () => "Day Start",
                 tooltip: () => "How Strong should the vibration be when the day starts?",
                 getValue: () => this.Config.DayStartLevel,
@@ -275,25 +291,26 @@ namespace ButtplugValley
 
         private void OnObjectListChanged(object sender, ObjectListChangedEventArgs e)
         {
-            if (e.IsCurrentLocation)
+            // Get the destroyed stones
+            var destroyedStones = e.Removed.Where(pair =>
             {
-                GameLocation location = Game1.currentLocation;
-
-                // Check each object in the location
-                foreach (KeyValuePair<Vector2, StardewValley.Object> pair in location.Objects.Pairs)
+                if (pair.Value is StardewValley.Object obj)
                 {
-                    Vector2 tilePosition = pair.Key;
-                    StardewValley.Object obj = pair.Value;
-
-                    // Check if the object is a stone
-                    if (obj.Name == "Stone" && Config.VibrateOnStoneBroken)
-                    {
-                        // Vibrate the device when a stone is present
-                        //this.Monitor.Log("Stone Detected", LogLevel.Debug);
-                        Task.Run(async () => { await buttplugManager.VibrateDevicePulse(Config.StoneBrokenLevel); });
-                        break;
-                    }
+                    return obj.Name == "Stone" || obj.Name.Contains("Ore");
                 }
+                return false;
+            }).ToList();
+            var destroyedStoneCount = 0;
+            
+            if (destroyedStones.Any())
+            {
+                // Increment the destroyed stone count
+                destroyedStoneCount += destroyedStones.Count;
+                //print the count
+                this.Monitor.Log($"DESTROYED {destroyedStoneCount} STONES", LogLevel.Debug);
+
+                // Vibrate the device
+                buttplugManager.VibrateDevicePulse(Config.StoneBrokenLevel);
             }
         }
 
