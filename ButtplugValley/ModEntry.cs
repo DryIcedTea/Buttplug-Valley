@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Minigames;
 using StardewValley.TerrainFeatures;
 using Object = StardewValley.Object;
 
@@ -18,6 +19,8 @@ namespace ButtplugValley
         private FishingMinigame fishingMinigame;
         private bool isVibrating = false;
         private int previousHealth;
+        private int previousMinekartHealth;
+        private int previousAbigailHealth;
         private int _levelUps;
 
         public override void Entry(IModHelper helper)
@@ -519,6 +522,7 @@ namespace ButtplugValley
         }
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
+            ArcadeMinigames(sender, e);
             fishingMinigame.isActive = Config.VibrateOnFishingMinigame;
             fishingMinigame.maxVibration = Config.MaxFishingVibration;
             // Check if the player's health has decreased since the last tick
@@ -537,6 +541,37 @@ namespace ButtplugValley
             }
             // Update the previous health value for the next tick
             previousHealth = Game1.player.health;
+        }
+
+        private void ArcadeMinigames(object sender, UpdateTickedEventArgs e)
+        {
+            //junimo kart lives trigger
+            if (!Context.IsWorldReady || Game1.currentMinigame == null) return;
+
+            if (Game1.currentMinigame is MineCart game && e.IsMultipleOf(5))
+            {
+                IReflectedField<int> minekartLives = Helper.Reflection.GetField<int>(game, "livesLeft");
+                if (minekartLives.GetValue() < previousMinekartHealth)
+                {
+                    buttplugManager.VibrateDevicePulse(50);
+                    this.Monitor.Log($"{Game1.player.Name} Life lost. Vibrating at {50}.", LogLevel.Debug);
+                }
+                previousMinekartHealth = minekartLives.GetValue();
+                
+
+                IReflectedField<int> livesLeft = Helper.Reflection.GetField<int>(game, "livesLeft");
+            }
+            //ABIGAIL GAME TRIGGER
+            if (Game1.currentMinigame is AbigailGame abigailGame && e.IsMultipleOf(5))
+            {
+                IReflectedField<int> abigailLives = Helper.Reflection.GetField<int>(abigailGame, "lives");
+                if (abigailLives.GetValue() < previousAbigailHealth)
+                {
+                    buttplugManager.VibrateDevicePulse(50);
+                    this.Monitor.Log($"{Game1.player.Name} Life lost. Vibrating at {50}.", LogLevel.Debug);
+                }
+                previousAbigailHealth = abigailLives.GetValue();
+            }
         }
 
         public void Unload()
