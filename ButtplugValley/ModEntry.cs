@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
@@ -19,9 +20,14 @@ namespace ButtplugValley
         private FishingMinigame fishingMinigame;
         private bool isVibrating = false;
         private int previousHealth;
+        private int previousCoins;
+        private int _levelUps;
+        
+        //Arcade Machines
         private int previousMinekartHealth;
         private int previousAbigailHealth;
-        private int _levelUps;
+        private int previousPowerupCount;
+        private bool isGameOverAbigail = false;
 
         public override void Entry(IModHelper helper)
         {
@@ -156,6 +162,13 @@ namespace ButtplugValley
                 getValue: () => this.Config.VibrateOnFishingMinigame,
                 setValue: value => this.Config.VibrateOnFishingMinigame = value
             );
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Arcade Minigames",
+                tooltip: () => "Should the device vibrate on certain events in the arcade minigames?",
+                getValue: () => this.Config.VibrateOnArcade,
+                setValue: value => this.Config.VibrateOnArcade = value
+            );
             /*
              * VIBRATION LEVELS
              */
@@ -268,6 +281,18 @@ namespace ButtplugValley
                 min: 0,
                 max: 100
             );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Arcade Minigames",
+                tooltip: () => "How Strong should the vibration be in the arcade minigames?",
+                getValue: () => this.Config.ArcadeLevel,
+                setValue: value => this.Config.ArcadeLevel = value,
+                min: 0,
+                max: 100
+            );
+            /*
+             * Keybinds
+             */
             configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Keybinds");
             configMenu.AddKeybind(
                 mod: this.ModManifest,
@@ -542,7 +567,7 @@ namespace ButtplugValley
             // Update the previous health value for the next tick
             previousHealth = Game1.player.health;
         }
-
+ 
         private void ArcadeMinigames(object sender, UpdateTickedEventArgs e)
         {
             //junimo kart lives trigger
@@ -553,8 +578,8 @@ namespace ButtplugValley
                 IReflectedField<int> minekartLives = Helper.Reflection.GetField<int>(game, "livesLeft");
                 if (minekartLives.GetValue() < previousMinekartHealth)
                 {
-                    buttplugManager.VibrateDevicePulse(50);
-                    this.Monitor.Log($"{Game1.player.Name} Life lost. Vibrating at {50}.", LogLevel.Debug);
+                    buttplugManager.VibrateDevicePulse(Config.ArcadeLevel);
+                    this.Monitor.Log($"{Game1.player.Name} Life lost. Vibrating at {Config.ArcadeLevel}.", LogLevel.Debug);
                 }
                 previousMinekartHealth = minekartLives.GetValue();
                 
@@ -565,15 +590,25 @@ namespace ButtplugValley
             if (Game1.currentMinigame is AbigailGame abigailGame && e.IsMultipleOf(5))
             {
                 IReflectedField<int> abigailLives = Helper.Reflection.GetField<int>(abigailGame, "lives");
-                if (abigailLives.GetValue() < previousAbigailHealth)
+                if (abigailLives.GetValue() != previousAbigailHealth)
                 {
-                    buttplugManager.VibrateDevicePulse(50);
-                    this.Monitor.Log($"{Game1.player.Name} Life lost. Vibrating at {50}.", LogLevel.Debug);
+                    buttplugManager.VibrateDevicePulse(Config.ArcadeLevel, 600);
+                    this.Monitor.Log($"{Game1.player.Name} Life lost. Vibrating at {Config.ArcadeLevel}.", LogLevel.Debug);
                 }
                 previousAbigailHealth = abigailLives.GetValue();
+                
+                IReflectedField<int> coinsField = Helper.Reflection.GetField<int>(abigailGame, "coins");
+                int currentCoins = coinsField.GetValue();
+                if (currentCoins > previousCoins)
+                {
+                    // Coin collected, trigger vibration
+                    buttplugManager.VibrateDevicePulse(Config.ArcadeLevel, 600);
+                    Monitor.Log($"{Game1.player.Name} Coin collected. Vibrating at {Config.ArcadeLevel}.", LogLevel.Debug);
+                }
+                previousCoins = currentCoins;
+                
             }
         }
-
         public void Unload()
         {
             buttplugManager.DisconnectButtplug();

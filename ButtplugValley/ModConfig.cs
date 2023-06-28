@@ -16,6 +16,8 @@ namespace ButtplugValley
         
         public bool VibrateOnFishingMinigame { get; set; } = true;
         
+        public bool VibrateOnArcade { get; set; } = true;
+        
         
         public int StoneBrokenLevel { get; set; } = 35;
         public int DamageTakenMax { get; set; } = 100;
@@ -30,6 +32,8 @@ namespace ButtplugValley
         public int DayStartLevel { get; set; } = 50;
         public int DayEndMax { get; set; } = 100;
         public int MaxFishingVibration { get; set; } = 100;
+
+        public int ArcadeLevel { get; set; } = 50;
         
         public SButton StopVibrations { get; set; } = SButton.P;
         public SButton DisconnectButtplug { get; set; } = SButton.I;
