@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Minigames;
 using StardewValley.TerrainFeatures;
 using Object = StardewValley.Object;
 
@@ -17,6 +20,14 @@ namespace ButtplugValley
         private FishingMinigame fishingMinigame;
         private bool isVibrating = false;
         private int previousHealth;
+        private int previousCoins;
+        private int _levelUps;
+        
+        //Arcade Machines
+        private int previousMinekartHealth;
+        private int previousAbigailHealth;
+        private int previousPowerupCount;
+        private bool isGameOverAbigail = false;
 
         public override void Entry(IModHelper helper)
         {
@@ -38,6 +49,37 @@ namespace ButtplugValley
             helper.Events.World.ObjectListChanged += OnObjectListChanged;
             helper.Events.Player.InventoryChanged += OnInventoryChanged;
             helper.Events.GameLoop.GameLaunched += OnGameLaunched;
+            helper.Events.World.NpcListChanged += OnNpcListChanged;
+            helper.Events.Player.LevelChanged += OnLevelChanged;
+        }
+
+        private void OnLevelChanged(object sender, LevelChangedEventArgs e)
+        {
+            if (e.IsLocalPlayer)
+            {
+                if (e.NewLevel > e.OldLevel)
+                {
+                    _levelUps++;
+                }
+            }
+        }
+
+        private void OnNpcListChanged(object sender, NpcListChangedEventArgs e)
+        {
+            // Get the defeated monsters from the removed NPCs
+            var defeatedMonsters = e.Removed.Where(npc => npc.IsMonster).ToList();
+            var defeatedEnemyCount = 0;
+            
+            if (defeatedMonsters.Any() && Config.VibrateOnEnemyKilled)
+            {
+                // Increment the defeated enemy count
+                defeatedEnemyCount += defeatedMonsters.Count;
+                Monitor.Log($"Defeated {defeatedEnemyCount} enemies", LogLevel.Debug);
+                
+
+                // Vibrate the device
+                buttplugManager.VibrateDevicePulse(Config.EnemyKilledLevel, 400*defeatedEnemyCount);
+            }
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -94,6 +136,13 @@ namespace ButtplugValley
             );
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
+                name: () => "Enemy Killed",
+                tooltip: () => "Should the device vibrate on killing an enemy? Scales with enemies killed at once.",
+                getValue: () => this.Config.VibrateOnEnemyKilled,
+                setValue: value => this.Config.VibrateOnEnemyKilled = value
+            );
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
                 name: () => "Day Start",
                 tooltip: () => "Should the device vibrate when the day starts?",
                 getValue: () => this.Config.VibrateOnDayStart,
@@ -112,6 +161,13 @@ namespace ButtplugValley
                 tooltip: () => "Should the device vibrate in the fishing minigame? Scales with the capture bar",
                 getValue: () => this.Config.VibrateOnFishingMinigame,
                 setValue: value => this.Config.VibrateOnFishingMinigame = value
+            );
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Arcade Minigames",
+                tooltip: () => "Should the device vibrate on certain events in the arcade minigames?",
+                getValue: () => this.Config.VibrateOnArcade,
+                setValue: value => this.Config.VibrateOnArcade = value
             );
             /*
              * VIBRATION LEVELS
@@ -191,6 +247,15 @@ namespace ButtplugValley
             );
             configMenu.AddNumberOption(
                 mod: this.ModManifest,
+                name: () => "Enemy Killed",
+                tooltip: () => "How Strong should the vibration be when killing an enemy?",
+                getValue: () => this.Config.EnemyKilledLevel,
+                setValue: value => this.Config.EnemyKilledLevel = value,
+                min: 0,
+                max: 100
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
                 name: () => "Day Start",
                 tooltip: () => "How Strong should the vibration be when the day starts?",
                 getValue: () => this.Config.DayStartLevel,
@@ -216,6 +281,18 @@ namespace ButtplugValley
                 min: 0,
                 max: 100
             );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Arcade Minigames",
+                tooltip: () => "How Strong should the vibration be in the arcade minigames?",
+                getValue: () => this.Config.ArcadeLevel,
+                setValue: value => this.Config.ArcadeLevel = value,
+                min: 0,
+                max: 100
+            );
+            /*
+             * Keybinds
+             */
             configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Keybinds");
             configMenu.AddKeybind(
                 mod: this.ModManifest,
@@ -255,25 +332,29 @@ namespace ButtplugValley
 
         private void OnObjectListChanged(object sender, ObjectListChangedEventArgs e)
         {
-            if (e.IsCurrentLocation)
+            // Get the destroyed stones
+            var destroyedStones = e.Removed.Where(pair =>
             {
-                GameLocation location = Game1.currentLocation;
-
-                // Check each object in the location
-                foreach (KeyValuePair<Vector2, StardewValley.Object> pair in location.Objects.Pairs)
+                if (pair.Value is StardewValley.Object obj)
                 {
-                    Vector2 tilePosition = pair.Key;
-                    StardewValley.Object obj = pair.Value;
-
-                    // Check if the object is a stone
-                    if (obj.Name == "Stone" && Config.VibrateOnStoneBroken)
-                    {
-                        // Vibrate the device when a stone is present
-                        //this.Monitor.Log("Stone Detected", LogLevel.Debug);
-                        Task.Run(async () => { await buttplugManager.VibrateDevicePulse(Config.StoneBrokenLevel); });
-                        break;
-                    }
+                    return obj.Name == "Stone" || obj.Name.Contains("Ore");
                 }
+                return false;
+            }).ToList();
+            var destroyedStoneCount = 0;
+            
+            if (destroyedStones.Any())
+            {
+                // Increment the destroyed stone count
+                destroyedStoneCount += destroyedStones.Count;
+                //print the count
+                this.Monitor.Log($"DESTROYED {destroyedStoneCount} STONES", LogLevel.Debug);
+                double durationmath = 3920 / (1 + (10 * Math.Exp(-0.16 * destroyedStoneCount)));
+                int duration = Convert.ToInt32(durationmath);
+
+                // Vibrate the device
+                this.Monitor.Log($"VIBRATING FOR {duration} milliseconds", LogLevel.Debug);
+                buttplugManager.VibrateDevicePulse(Config.StoneBrokenLevel, duration);
             }
         }
 
@@ -284,13 +365,13 @@ namespace ButtplugValley
                 if (!Config.VibrateOnDayEnd) return;
                 
                 var level = Config.DayEndMax;
-                this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {50} then 100.", LogLevel.Debug);
+                this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {50} then 100.", LogLevel.Trace);
                 await buttplugManager.VibrateDevice(level-50);
-                await Task.Delay(800);
+                await Task.Delay(800 + (500*_levelUps));
                 await buttplugManager.VibrateDevice(level-20);
-                await Task.Delay(400);
+                await Task.Delay(400 + (250*_levelUps));
                 await buttplugManager.VibrateDevice(level);
-                await Task.Delay(200);
+                await Task.Delay(200 + (125*_levelUps));
                 await buttplugManager.VibrateDevice(0);
             });
             
@@ -448,6 +529,7 @@ namespace ButtplugValley
         }
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
+            _levelUps = 0;
             if (!Config.VibrateOnDayStart) return;
             //fishingMinigame.previousCaptureLevel = 0f;
             Task.Run(async () =>
@@ -465,6 +547,7 @@ namespace ButtplugValley
         }
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
+            ArcadeMinigames(sender, e);
             fishingMinigame.isActive = Config.VibrateOnFishingMinigame;
             fishingMinigame.maxVibration = Config.MaxFishingVibration;
             // Check if the player's health has decreased since the last tick
@@ -484,7 +567,48 @@ namespace ButtplugValley
             // Update the previous health value for the next tick
             previousHealth = Game1.player.health;
         }
+ 
+        private void ArcadeMinigames(object sender, UpdateTickedEventArgs e)
+        {
+            //junimo kart lives trigger
+            if (!Context.IsWorldReady || Game1.currentMinigame == null) return;
 
+            if (Game1.currentMinigame is MineCart game && e.IsMultipleOf(5))
+            {
+                IReflectedField<int> minekartLives = Helper.Reflection.GetField<int>(game, "livesLeft");
+                if (minekartLives.GetValue() < previousMinekartHealth)
+                {
+                    buttplugManager.VibrateDevicePulse(Config.ArcadeLevel);
+                    this.Monitor.Log($"{Game1.player.Name} Life lost. Vibrating at {Config.ArcadeLevel}.", LogLevel.Debug);
+                }
+                previousMinekartHealth = minekartLives.GetValue();
+                
+
+                IReflectedField<int> livesLeft = Helper.Reflection.GetField<int>(game, "livesLeft");
+            }
+            //ABIGAIL GAME TRIGGER
+            if (Game1.currentMinigame is AbigailGame abigailGame && e.IsMultipleOf(5))
+            {
+                IReflectedField<int> abigailLives = Helper.Reflection.GetField<int>(abigailGame, "lives");
+                if (abigailLives.GetValue() != previousAbigailHealth)
+                {
+                    buttplugManager.VibrateDevicePulse(Config.ArcadeLevel, 600);
+                    this.Monitor.Log($"{Game1.player.Name} Life lost. Vibrating at {Config.ArcadeLevel}.", LogLevel.Debug);
+                }
+                previousAbigailHealth = abigailLives.GetValue();
+                
+                IReflectedField<int> coinsField = Helper.Reflection.GetField<int>(abigailGame, "coins");
+                int currentCoins = coinsField.GetValue();
+                if (currentCoins > previousCoins)
+                {
+                    // Coin collected, trigger vibration
+                    buttplugManager.VibrateDevicePulse(Config.ArcadeLevel, 600);
+                    Monitor.Log($"{Game1.player.Name} Coin collected. Vibrating at {Config.ArcadeLevel}.", LogLevel.Debug);
+                }
+                previousCoins = currentCoins;
+                
+            }
+        }
         public void Unload()
         {
             buttplugManager.DisconnectButtplug();

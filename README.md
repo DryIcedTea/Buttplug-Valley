@@ -27,7 +27,8 @@ This mod allows you to connect your Buttplug.io compatible toys to Stardew Valle
 
 ## Planned Features
 * Vibrations on breaking large rocks and stumps
-* Vibrations on killing monsters
+* Vibrations on killing enemies. Scaling with amount of enemies killed at once. 
+* Scaling vibration duration on breaking multiple rocks at once.
 * Suggestions are more than welcome!
 ## FAQ
 ### What toys does this work with?
