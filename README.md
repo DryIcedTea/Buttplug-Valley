@@ -2,6 +2,7 @@
 ## A [Buttplug.io](https://buttplug.io/) mod for Stardew Valley
 
 This mod allows you to connect your Buttplug.io compatible toys to Stardew Valley. It's a very simple mod, but it works.
+## [DOWNLOADS](https://github.com/DryIcedTea/Buttplug-Valley/releases)
 
 ## Installation and Setup
 1. Install [Intiface Central](https://intiface.com/central/)
