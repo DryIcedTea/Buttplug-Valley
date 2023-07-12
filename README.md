@@ -22,14 +22,15 @@ This mod allows you to connect your Buttplug.io compatible toys to Stardew Valle
 * Vibrations on day end and start.
 * Vibrations on fully breaking rocks.
 * Vibrations in the Fishing Minigame (Scales with the green capture bar)
+* Vibrations on killing enemies. Scales with the amount of enemies killed at once.
+* Scaling vibrations with the amount of stones broken at once.
+* Vibrations in the arcade machine games.
 * Customizable vibration strength and toggles for each feature
   * Requires the [Generic Mod Config Menu Mod](https://www.moddrop.com/stardew-valley/mods/771692-generic-mod-config-menu)
     * Can also be found on [Nexus Mods](https://www.nexusmods.com/stardewvalley/mods/5098)
 
 ### [Pre-Release](https://github.com/DryIcedTea/Buttplug-Valley/releases) features
-* Vibrations on killing enemies. Scales with the amount of enemies killed at once.
-* Scaling vibrations with the amount of stones broken at once. 
-* Vibrations in the arcade machine games.
+All Pre release features are now in the full release!
 
 ## Planned Features
 * Vibrations on breaking large rocks and stumps
