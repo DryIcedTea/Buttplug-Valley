@@ -400,7 +400,8 @@ namespace ButtplugValley
                         break; // Exit the loop after the first harvested crop is found
                     }
                     if (obj.Category == StardewValley.Object.VegetableCategory ||
-                        obj.Category == StardewValley.Object.FruitsCategory || obj.Category == StardewValley.Object.MilkCategory )
+                        obj.Category == StardewValley.Object.FruitsCategory || obj.Category == StardewValley.Object.MilkCategory
+                        || obj.Category == StardewValley.Object.EggCategory || obj.ParentSheetIndex == 433)
                     {
                         
                         if (!Config.VibrateOnCropAndMilkCollected) return;
