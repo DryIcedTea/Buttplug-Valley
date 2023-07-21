@@ -416,6 +416,7 @@ namespace ButtplugValley
                 // Check if the changed item is a fish
                 if (change.Item is StardewValley.Object obj)
                 {
+                    this.Monitor.Log($"Item: {obj.Name}, Category: {obj.getCategoryName()}", LogLevel.Debug);
                     if (obj.Category == StardewValley.Object.FishCategory)
                     {
                         if (!Config.VibrateOnFishCollected) return;
