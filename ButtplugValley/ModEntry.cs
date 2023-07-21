@@ -388,15 +388,11 @@ namespace ButtplugValley
                 // Check if the removed item is a crop
                 if (item is StardewValley.Object obj)
                 {
-                    
-                    if (obj.Category == StardewValley.Object.FishCategory && Config.VibrateOnFishCollected)
+                    if (obj.Category == StardewValley.Object.FishCategory)
                     {
+                        if (!Config.VibrateOnFishCollected) return;
                         this.Monitor.Log("Fish", LogLevel.Debug);
-                        if (obj.Quality == StardewValley.Object.medQuality) buttplugManager.VibrateDevicePulse(Config.SilverLevel);
-                        else if (obj.Quality == StardewValley.Object.highQuality) buttplugManager.VibrateDevicePulse(Config.GoldLevel, 650);
-                        else if (obj.Quality == StardewValley.Object.bestQuality) buttplugManager.VibrateDevicePulse(Config.IridiumLevel, 1000);
-                        // Vibrate the device
-                        else buttplugManager.VibrateDevicePulse(Config.FishCollectedBasic); // Adjust the power level as desired
+                        VibrateBasedOnQuality(obj, Config.FishCollectedBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
                     if (obj.Category == StardewValley.Object.VegetableCategory ||
@@ -406,11 +402,7 @@ namespace ButtplugValley
                         
                         if (!Config.VibrateOnCropAndMilkCollected) return;
                         this.Monitor.Log("Vegetable", LogLevel.Debug);
-                        if (obj.Quality == StardewValley.Object.medQuality) buttplugManager.VibrateDevicePulse(Config.SilverLevel);
-                        else if (obj.Quality == StardewValley.Object.highQuality) buttplugManager.VibrateDevicePulse(Config.GoldLevel, 650);
-                        else if (obj.Quality == StardewValley.Object.bestQuality) buttplugManager.VibrateDevicePulse(Config.IridiumLevel, 1200);
-                        // Vibrate the device
-                        else buttplugManager.VibrateDevicePulse(Config.CropAndMilkBasic); // Adjust the power level as desired
+                        VibrateBasedOnQuality(obj, Config.CropAndMilkBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
                 }
@@ -420,33 +412,39 @@ namespace ButtplugValley
                 // Check if the changed item is a fish
                 if (change.Item is StardewValley.Object obj)
                 {
-                    if (obj.Category == StardewValley.Object.FishCategory && Config.VibrateOnFishCollected)
+                    if (obj.Category == StardewValley.Object.FishCategory)
                     {
-                        if (obj.Quality == StardewValley.Object.medQuality)
-                            buttplugManager.VibrateDevicePulse(Config.SilverLevel);
-                        else if (obj.Quality == StardewValley.Object.highQuality)
-                            buttplugManager.VibrateDevicePulse(Config.GoldLevel, 650);
-                        else if (obj.Quality == StardewValley.Object.bestQuality)
-                            buttplugManager.VibrateDevicePulse(Config.IridiumLevel, 1000);
-                        else
-                            buttplugManager.VibrateDevicePulse(Config.FishCollectedBasic); // Adjust the power level as desired
+                        if (!Config.VibrateOnFishCollected) return;
+                        VibrateBasedOnQuality(obj, Config.FishCollectedBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
                     if (obj.Category == StardewValley.Object.VegetableCategory ||
                         obj.Category == StardewValley.Object.FruitsCategory)
                     {
                         if (!Config.VibrateOnCropAndMilkCollected) return;
-                        if (obj.Quality == StardewValley.Object.medQuality)
-                            buttplugManager.VibrateDevicePulse(Config.SilverLevel);
-                        else if (obj.Quality == StardewValley.Object.highQuality)
-                            buttplugManager.VibrateDevicePulse(Config.GoldLevel, 650);
-                        else if (obj.Quality == StardewValley.Object.bestQuality)
-                            buttplugManager.VibrateDevicePulse(Config.IridiumLevel, 1200);
-                        else
-                            buttplugManager.VibrateDevicePulse(Config.CropAndMilkBasic); // Adjust the power level as desired
+                        VibrateBasedOnQuality(obj, Config.CropAndMilkBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
                 }
+            }
+        }
+
+        private void VibrateBasedOnQuality(StardewValley.Object obj, int basicLevel)
+        {
+            switch (obj.Quality)
+            {
+                case StardewValley.Object.medQuality:
+                    _ = buttplugManager.VibrateDevicePulse(Config.SilverLevel);
+                    break;
+                case StardewValley.Object.highQuality:
+                    _ = buttplugManager.VibrateDevicePulse(Config.GoldLevel, 650);
+                    break;
+                case StardewValley.Object.bestQuality:
+                    _ = buttplugManager.VibrateDevicePulse(Config.IridiumLevel, 1200);
+                    break;
+                default:
+                    _ = buttplugManager.VibrateDevicePulse(basicLevel); // Adjust the power level as desired
+                    break;
             }
         }
 
