@@ -22,6 +22,8 @@ namespace ButtplugValley
         private int previousHealth;
         private int previousCoins;
         private int _levelUps;
+
+        private const int CoffeeBeansID = 433;
         
         //Arcade Machines
         private int previousMinekartHealth;
@@ -396,8 +398,10 @@ namespace ButtplugValley
                         break; // Exit the loop after the first harvested crop is found
                     }
                     if (obj.Category == StardewValley.Object.VegetableCategory ||
-                        obj.Category == StardewValley.Object.FruitsCategory || obj.Category == StardewValley.Object.MilkCategory
-                        || obj.Category == StardewValley.Object.EggCategory || obj.ParentSheetIndex == 433)
+                        obj.Category == StardewValley.Object.FruitsCategory || 
+                        obj.Category == StardewValley.Object.MilkCategory || 
+                        obj.Category == StardewValley.Object.EggCategory || 
+                        obj.ParentSheetIndex == CoffeeBeansID)
                     {
                         
                         if (!Config.VibrateOnCropAndMilkCollected) return;
