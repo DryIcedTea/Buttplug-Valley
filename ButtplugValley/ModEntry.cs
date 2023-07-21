@@ -423,7 +423,9 @@ namespace ButtplugValley
                         break; // Exit the loop after the first harvested crop is found
                     }
                     if (obj.Category == StardewValley.Object.VegetableCategory ||
-                        obj.Category == StardewValley.Object.FruitsCategory)
+                        obj.Category == StardewValley.Object.FruitsCategory ||
+                        obj.Category == StardewValley.Object.flowersCategory ||
+                        obj.Category == StardewValley.Object.GreensCategory)
                     {
                         if (!Config.VibrateOnCropAndMilkCollected) return;
                         VibrateBasedOnQuality(obj, Config.CropAndMilkBasic);
