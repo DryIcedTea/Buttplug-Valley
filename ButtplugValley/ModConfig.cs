@@ -10,6 +10,8 @@ namespace ButtplugValley
         public bool VibrateOnEnemyKilled { get; set; } = true;
         public bool VibrateOnFishCollected { get; set; } = true;
         public bool VibrateOnCropAndMilkCollected { get; set; } = true;
+        public bool VibrateOnFlowersCollected { get; set; } = true;
+        public bool VibrateOnForagingCollected { get; set; } = true;
         public bool VibrateOnTreeBroken { get; set; } = true;
         public bool VibrateOnDayStart { get; set; } = true;
         public bool VibrateOnDayEnd { get; set; } = true;
@@ -25,6 +27,8 @@ namespace ButtplugValley
         public int EnemyKilledLevel { get; set; } = 35;
         public int FishCollectedBasic { get; set; } = 30;
         public int CropAndMilkBasic { get; set; } = 30;
+        public int FlowerBasic { get; set; } = 30;
+        public int ForagingBasic { get; set; } = 30;
         public int SilverLevel { get; set; } = 55;
         public int GoldLevel { get; set; } = 85;
         public int IridiumLevel { get; set; } = 100;

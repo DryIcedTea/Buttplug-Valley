@@ -22,6 +22,8 @@ namespace ButtplugValley
         private int previousHealth;
         private int previousCoins;
         private int _levelUps;
+
+        private const int CoffeeBeansID = 433;
         
         //Arcade Machines
         private int previousMinekartHealth;
@@ -115,6 +117,20 @@ namespace ButtplugValley
             );
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
+                name: () => "Flower Pickup",
+                tooltip: () => "Should the device vibrate on collecting flowers?",
+                getValue: () => this.Config.VibrateOnFlowersCollected,
+                setValue: value => this.Config.VibrateOnFlowersCollected = value
+            );
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Foraging Pickup",
+                tooltip: () => "Should the device vibrate on collecting foraging?",
+                getValue: () => this.Config.VibrateOnForagingCollected,
+                setValue: value => this.Config.VibrateOnForagingCollected = value
+            );
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
                 name: () => "Stone Broken",
                 tooltip: () => "Should the device vibrate on breaking stone and ores?",
                 getValue: () => this.Config.VibrateOnStoneBroken,
@@ -188,6 +204,24 @@ namespace ButtplugValley
                 tooltip: () => "How Strong should the vibration be for picking up normal fish?",
                 getValue: () => this.Config.FishCollectedBasic,
                 setValue: value => this.Config.FishCollectedBasic = value,
+                min: 0,
+                max: 100
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Basic Flower Pickup",
+                tooltip: () => "How Strong should the vibration be for picking up normal flowers?",
+                getValue: () => this.Config.FlowerBasic,
+                setValue: value => this.Config.FlowerBasic = value,
+                min: 0,
+                max: 100
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Basic Foraging Pickup",
+                tooltip: () => "How Strong should the vibration be for picking up normal foraging?",
+                getValue: () => this.Config.ForagingBasic,
+                setValue: value => this.Config.ForagingBasic = value,
                 min: 0,
                 max: 100
             );
@@ -382,35 +416,44 @@ namespace ButtplugValley
             if (!Context.IsWorldReady)
                 return;
 
-            // Check if any items were removed from the inventory
+            // Check if any items were added from the inventory
             foreach (Item item in e.Added)
             {
-                // Check if the removed item is a crop
                 if (item is StardewValley.Object obj)
                 {
-                    
-                    if (obj.Category == StardewValley.Object.FishCategory && Config.VibrateOnFishCollected)
+                    this.Monitor.Log($"Added Item: {obj.Name}, Category: {obj.getCategoryName()}, Category Id: {obj.Category}", LogLevel.Debug);
+                    if (obj.Category == StardewValley.Object.FishCategory)
                     {
+                        if (!Config.VibrateOnFishCollected) return;
                         this.Monitor.Log("Fish", LogLevel.Debug);
-                        if (obj.Quality == StardewValley.Object.medQuality) buttplugManager.VibrateDevicePulse(Config.SilverLevel);
-                        else if (obj.Quality == StardewValley.Object.highQuality) buttplugManager.VibrateDevicePulse(Config.GoldLevel, 650);
-                        else if (obj.Quality == StardewValley.Object.bestQuality) buttplugManager.VibrateDevicePulse(Config.IridiumLevel, 1000);
-                        // Vibrate the device
-                        else buttplugManager.VibrateDevicePulse(Config.FishCollectedBasic); // Adjust the power level as desired
+                        VibrateBasedOnQuality(obj, Config.FishCollectedBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
                     if (obj.Category == StardewValley.Object.VegetableCategory ||
-                        obj.Category == StardewValley.Object.FruitsCategory || obj.Category == StardewValley.Object.MilkCategory
-                        || obj.Category == StardewValley.Object.EggCategory || obj.ParentSheetIndex == 433)
+                        obj.Category == StardewValley.Object.FruitsCategory || 
+                        obj.Category == StardewValley.Object.MilkCategory || 
+                        obj.Category == StardewValley.Object.EggCategory || 
+                        obj.ParentSheetIndex == CoffeeBeansID)
                     {
                         
                         if (!Config.VibrateOnCropAndMilkCollected) return;
-                        this.Monitor.Log("Vegetable", LogLevel.Debug);
-                        if (obj.Quality == StardewValley.Object.medQuality) buttplugManager.VibrateDevicePulse(Config.SilverLevel);
-                        else if (obj.Quality == StardewValley.Object.highQuality) buttplugManager.VibrateDevicePulse(Config.GoldLevel, 650);
-                        else if (obj.Quality == StardewValley.Object.bestQuality) buttplugManager.VibrateDevicePulse(Config.IridiumLevel, 1200);
-                        // Vibrate the device
-                        else buttplugManager.VibrateDevicePulse(Config.CropAndMilkBasic); // Adjust the power level as desired
+                        this.Monitor.Log("Crop or Milk Added", LogLevel.Debug);
+                        VibrateBasedOnQuality(obj, Config.CropAndMilkBasic);
+                        break; // Exit the loop after the first harvested crop is found
+                    }
+                    if (obj.Category == StardewValley.Object.flowersCategory)
+                    {
+                        if (!Config.VibrateOnFlowersCollected) return;
+                        this.Monitor.Log("Flower Added", LogLevel.Debug);
+                        VibrateBasedOnQuality(obj, Config.FlowerBasic);
+                        break; // Exit the loop after the first harvested crop is found
+                    }
+                    if (obj.Category == StardewValley.Object.GreensCategory ||
+                        obj.Category == StardewValley.Object.sellAtFishShopCategory)
+                    {
+                        if (!Config.VibrateOnForagingCollected) return;
+                        this.Monitor.Log("Foraging Added", LogLevel.Debug);
+                        VibrateBasedOnQuality(obj, Config.ForagingBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
                 }
@@ -420,33 +463,59 @@ namespace ButtplugValley
                 // Check if the changed item is a fish
                 if (change.Item is StardewValley.Object obj)
                 {
-                    if (obj.Category == StardewValley.Object.FishCategory && Config.VibrateOnFishCollected)
+                    this.Monitor.Log($"Changed Item: {obj.Name}, Category: {obj.getCategoryName()}, Category Id: {obj.Category}", LogLevel.Debug);
+                    if (obj.Category == StardewValley.Object.FishCategory)
                     {
-                        if (obj.Quality == StardewValley.Object.medQuality)
-                            buttplugManager.VibrateDevicePulse(Config.SilverLevel);
-                        else if (obj.Quality == StardewValley.Object.highQuality)
-                            buttplugManager.VibrateDevicePulse(Config.GoldLevel, 650);
-                        else if (obj.Quality == StardewValley.Object.bestQuality)
-                            buttplugManager.VibrateDevicePulse(Config.IridiumLevel, 1000);
-                        else
-                            buttplugManager.VibrateDevicePulse(Config.FishCollectedBasic); // Adjust the power level as desired
+                        if (!Config.VibrateOnFishCollected) return;
+                        VibrateBasedOnQuality(obj, Config.FishCollectedBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
                     if (obj.Category == StardewValley.Object.VegetableCategory ||
-                        obj.Category == StardewValley.Object.FruitsCategory)
+                        obj.Category == StardewValley.Object.FruitsCategory ||
+                        obj.Category == StardewValley.Object.MilkCategory ||
+                        obj.Category == StardewValley.Object.EggCategory ||
+                        obj.ParentSheetIndex == CoffeeBeansID)
                     {
                         if (!Config.VibrateOnCropAndMilkCollected) return;
-                        if (obj.Quality == StardewValley.Object.medQuality)
-                            buttplugManager.VibrateDevicePulse(Config.SilverLevel);
-                        else if (obj.Quality == StardewValley.Object.highQuality)
-                            buttplugManager.VibrateDevicePulse(Config.GoldLevel, 650);
-                        else if (obj.Quality == StardewValley.Object.bestQuality)
-                            buttplugManager.VibrateDevicePulse(Config.IridiumLevel, 1200);
-                        else
-                            buttplugManager.VibrateDevicePulse(Config.CropAndMilkBasic); // Adjust the power level as desired
+                        this.Monitor.Log("Crop or Milk Changed", LogLevel.Debug);
+                        VibrateBasedOnQuality(obj, Config.CropAndMilkBasic);
+                        break; // Exit the loop after the first harvested crop is found
+                    }
+                    if (obj.Category == StardewValley.Object.flowersCategory)
+                    {
+                        if (!Config.VibrateOnFlowersCollected) return;
+                        this.Monitor.Log("Flower Changed", LogLevel.Debug);
+                        VibrateBasedOnQuality(obj, Config.FlowerBasic);
+                        break; // Exit the loop after the first harvested crop is found
+                    }
+                    if (obj.Category == StardewValley.Object.GreensCategory ||
+                        obj.Category == StardewValley.Object.sellAtFishShopCategory)
+                    {
+                        if (!Config.VibrateOnForagingCollected) return;
+                        this.Monitor.Log("Foraging Changed", LogLevel.Debug);
+                        VibrateBasedOnQuality(obj, Config.ForagingBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
                 }
+            }
+        }
+
+        private void VibrateBasedOnQuality(StardewValley.Object obj, int basicLevel)
+        {
+            switch (obj.Quality)
+            {
+                case StardewValley.Object.medQuality:
+                    _ = buttplugManager.VibrateDevicePulse(Config.SilverLevel);
+                    break;
+                case StardewValley.Object.highQuality:
+                    _ = buttplugManager.VibrateDevicePulse(Config.GoldLevel, 650);
+                    break;
+                case StardewValley.Object.bestQuality:
+                    _ = buttplugManager.VibrateDevicePulse(Config.IridiumLevel, 1200);
+                    break;
+                default:
+                    _ = buttplugManager.VibrateDevicePulse(basicLevel); // Adjust the power level as desired
+                    break;
             }
         }
 

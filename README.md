@@ -25,6 +25,7 @@ This mod allows you to connect your Buttplug.io compatible toys to Stardew Valle
 * Vibrations on killing enemies. Scales with the amount of enemies killed at once.
 * Scaling vibrations with the amount of stones broken at once.
 * Vibrations in the arcade machine games.
+* Vibartions on collecting foraging items.
 * Customizable vibration strength and toggles for each feature
   * Requires the [Generic Mod Config Menu Mod](https://www.moddrop.com/stardew-valley/mods/771692-generic-mod-config-menu)
     * Can also be found on [Nexus Mods](https://www.nexusmods.com/stardewvalley/mods/5098)
