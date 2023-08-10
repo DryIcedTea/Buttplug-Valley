@@ -25,13 +25,13 @@ This mod allows you to connect your Buttplug.io compatible toys to Stardew Valle
 * Vibrations on killing enemies. Scales with the amount of enemies killed at once.
 * Scaling vibrations with the amount of stones broken at once.
 * Vibrations in the arcade machine games.
-* Vibartions on collecting foraging items.
+* Vibartions on collecting foraging items. ([PRE RELEASE](https://github.com/DryIcedTea/Buttplug-Valley/releases) ONLY)
 * Customizable vibration strength and toggles for each feature
   * Requires the [Generic Mod Config Menu Mod](https://www.moddrop.com/stardew-valley/mods/771692-generic-mod-config-menu)
     * Can also be found on [Nexus Mods](https://www.nexusmods.com/stardewvalley/mods/5098)
 
 ### [Pre-Release](https://github.com/DryIcedTea/Buttplug-Valley/releases) features
-All Pre release features are now in the full release!
+* Vibrations on collecting foraging items!
 
 ## Planned Features
 * Vibrations on breaking large rocks and stumps
@@ -48,8 +48,9 @@ Maybe. Please let me know what you want to see added/changed!
 
 ## Feedback
 If you have any feedback, feel free to open an issue, [tweet](https://twitter.com/DryIcedMatcha) at me or message me on discord. You'll find me in the [buttplug.io discord](https://discord.buttplug.io/)!
-I honestly don't know what I'm doing, so feedback is **very** much appreciated.
+I don't know what I'm doing, so feedback is **very** much appreciated.
 
 
 ## Special thanks
 * qdot for adding multiple device support and helping me with some of the code!
+* Bo-Shamo for adding foraging support!
