@@ -290,6 +290,13 @@ namespace ButtplugValley
                 min: 0,
                 max: 100
             );
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Keep Alive Pulse",
+                tooltip: () => "Vibrate every 30s to keep connection alive?",
+                getValue: () => this.Config.KeepAlive,
+                setValue: value => this.Config.KeepAlive = value
+            );
             /*
              * Keybinds
              */
@@ -566,6 +573,16 @@ namespace ButtplugValley
             }
             // Update the previous health value for the next tick
             previousHealth = Game1.player.health;
+
+
+            // Vibrate the plug for keepalive
+            if (e.IsMultipleOf(1800))
+            {
+                if (!Config.KeepAlive) return;
+                int intensity = 25;
+                int duration = 250;
+                buttplugManager.VibrateDevicePulse(intensity, duration);
+            }
         }
  
         private void ArcadeMinigames(object sender, UpdateTickedEventArgs e)

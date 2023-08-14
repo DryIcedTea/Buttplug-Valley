@@ -4,6 +4,7 @@ namespace ButtplugValley
 {
     public sealed class ModConfig
     {
+        public bool KeepAlive { get; set; } = true;
         public bool VibrateOnStoneBroken { get; set; } = true;
         public bool VibrateOnDamageTaken { get; set; } = true;
         
