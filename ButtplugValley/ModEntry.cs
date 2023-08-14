@@ -297,6 +297,25 @@ namespace ButtplugValley
                 min: 0,
                 max: 100
             );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Keep Alive Interval",
+                tooltip: () => "How frequently should the Keep alive signal be sent (in seconds)",
+                getValue: () => this.Config.KeepAliveInterval,
+                setValue: value => this.Config.KeepAliveInterval = value,
+                min: 5,
+                max: 300,
+                interval: 5
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Keep Alive Intensity",
+                tooltip: () => "How strong should the keep alive vibration be?",
+                getValue: () => this.Config.KeepAliveLevel,
+                setValue: value => this.Config.KeepAliveLevel = value,
+                min: 0,
+                max: 100
+            );
             /*
              * Keybinds
              */
@@ -576,12 +595,11 @@ namespace ButtplugValley
 
 
             // Vibrate the plug for keepalive
-            if (e.IsMultipleOf(1800))
+            if (e.IsMultipleOf((uint)Config.KeepAliveInterval*60))
             {
                 if (!Config.KeepAlive) return;
-                int intensity = 25;
                 int duration = 250;
-                buttplugManager.VibrateDevicePulse(intensity, duration);
+                buttplugManager.VibrateDevicePulse(Config.KeepAliveLevel, duration);
             }
         }
  
