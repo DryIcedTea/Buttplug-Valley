@@ -169,6 +169,13 @@ namespace ButtplugValley
                 getValue: () => this.Config.VibrateOnArcade,
                 setValue: value => this.Config.VibrateOnArcade = value
             );
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Keep Alive Pulse",
+                tooltip: () => "Vibrate every 30s to keep connection alive?",
+                getValue: () => this.Config.KeepAlive,
+                setValue: value => this.Config.KeepAlive = value
+            );
             /*
              * VIBRATION LEVELS
              */
@@ -289,13 +296,6 @@ namespace ButtplugValley
                 setValue: value => this.Config.ArcadeLevel = value,
                 min: 0,
                 max: 100
-            );
-            configMenu.AddBoolOption(
-                mod: this.ModManifest,
-                name: () => "Keep Alive Pulse",
-                tooltip: () => "Vibrate every 30s to keep connection alive?",
-                getValue: () => this.Config.KeepAlive,
-                setValue: value => this.Config.KeepAlive = value
             );
             /*
              * Keybinds
