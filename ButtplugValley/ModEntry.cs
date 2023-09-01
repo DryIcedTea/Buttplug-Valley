@@ -216,6 +216,13 @@ namespace ButtplugValley
             );
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
+                name: () => "Fishing Rod",
+                tooltip: () => "Should the device vibrate when using fishing rod",
+                getValue: () => this.Config.VibrateOnFishingRodUsage,
+                setValue: value => this.Config.VibrateOnFishingRodUsage = value
+            );
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
                 name: () => "Arcade Minigames",
                 tooltip: () => "Should the device vibrate on certain events in the arcade minigames?",
                 getValue: () => this.Config.VibrateOnArcade,
