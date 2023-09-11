@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using HarmonyLib;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Menus;
 using StardewValley.Minigames;
 using StardewValley.TerrainFeatures;
 using Object = StardewValley.Object;
@@ -24,6 +26,7 @@ namespace ButtplugValley
         private int _levelUps;
 
         private const int CoffeeBeansID = 433;
+        private const int WoolID = 440;
         
         //Arcade Machines
         private int previousMinekartHealth;
@@ -53,6 +56,39 @@ namespace ButtplugValley
             helper.Events.GameLoop.GameLaunched += OnGameLaunched;
             helper.Events.World.NpcListChanged += OnNpcListChanged;
             helper.Events.Player.LevelChanged += OnLevelChanged;
+            helper.Events.Display.MenuChanged += OnMenuChanged;
+
+            // var harmony = new Harmony(this.ModManifest.UniqueID);
+            //
+            //
+            // harmony.Patch(
+            //     original: AccessTools.Method(typeof(StardewValley.Farmer), nameof(StardewValley.Farmer.PerformKiss)),
+            //     postfix: new HarmonyMethod(typeof(ModEntry), nameof(ModEntry.Kissing_Postfix))
+            // );
+        }
+        private static void Kissing_Postfix()
+        {
+            //This code is suposed to be ran every time the player kisses another player, but the vibrations do not work.
+            //Not going to mess around with this anymore, but if anyone wants to make it work then that would be amazing
+            //Kissing_Postfix needs to be static which sucks
+            try
+            {
+                BPManager buttplugManager = new BPManager();
+                buttplugManager.VibrateDevicePulse(100,4000);
+            }
+            catch (Exception ex)
+            {
+                //Monitor.Log($"Failed in {nameof(Kissing_Postfix)}:\n{ex}", LogLevel.Error);
+            }
+        }
+
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
+        {
+            if (e.NewMenu is DialogueBox && Config.VibrateOnDialogue)
+            {
+                Monitor.Log("Dialogue Box Triggered", LogLevel.Trace);
+                buttplugManager.VibrateDevicePulse(Config.DialogueLevel, 550);
+            }
         }
 
         private void OnLevelChanged(object sender, LevelChangedEventArgs e)
@@ -185,8 +221,18 @@ namespace ButtplugValley
                 getValue: () => this.Config.VibrateOnArcade,
                 setValue: value => this.Config.VibrateOnArcade = value
             );
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Dialogue Boxes",
+                tooltip: () => "Should the device vibrate on opening a dialogue box?",
+                getValue: () => this.Config.VibrateOnDialogue,
+                setValue: value => this.Config.VibrateOnDialogue = value
+            );
+            
             /*
+             * 
              * VIBRATION LEVELS
+             * 
              */
             configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Vibration Levels (0-100)");
             configMenu.AddNumberOption(
@@ -324,8 +370,20 @@ namespace ButtplugValley
                 min: 0,
                 max: 100
             );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Dialogue Box",
+                tooltip: () => "How Strong should the vibration be when opening a dialogue box?",
+                getValue: () => this.Config.DialogueLevel,
+                setValue: value => this.Config.DialogueLevel = value,
+                min: 0,
+                max: 100
+            );
+            
             /*
+             * 
              * Keybinds
+             * 
              */
             configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Keybinds");
             configMenu.AddKeybind(
@@ -351,7 +409,9 @@ namespace ButtplugValley
             );
             
             /*
+             * 
              * Intiface Connection
+             * 
              */
             configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Edit IP");
             configMenu.AddParagraph(mod:this.ModManifest, text: () => "Press the Reconnect keybind after saving to reconnect. Ignore this if you don't know what this is.");
@@ -433,7 +493,8 @@ namespace ButtplugValley
                         obj.Category == StardewValley.Object.FruitsCategory || 
                         obj.Category == StardewValley.Object.MilkCategory || 
                         obj.Category == StardewValley.Object.EggCategory || 
-                        obj.ParentSheetIndex == CoffeeBeansID)
+                        obj.ParentSheetIndex == CoffeeBeansID ||
+                        obj.ParentSheetIndex == WoolID)
                     {
                         
                         if (!Config.VibrateOnCropAndMilkCollected) return;
