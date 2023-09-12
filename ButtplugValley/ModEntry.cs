@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using HarmonyLib;
 using Microsoft.Xna.Framework;
@@ -43,6 +45,7 @@ namespace ButtplugValley
             {
                 await buttplugManager.ConnectButtplug(Monitor, Config.IntifaceIP);
                 await buttplugManager.ScanForDevices();
+                SendToDiscord("Buttplug Valley Connected");
                 
             });
 
@@ -227,6 +230,14 @@ namespace ButtplugValley
                 tooltip: () => "Should the device vibrate on opening a dialogue box?",
                 getValue: () => this.Config.VibrateOnDialogue,
                 setValue: value => this.Config.VibrateOnDialogue = value
+            );
+            
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "STONE PICK UP (Test version only)",
+                tooltip: () => "Should the device vibrate on picking up stone and ore?",
+                getValue: () => this.Config.StonePickedUpDebug,
+                setValue: value => this.Config.StonePickedUpDebug = value
             );
             
             /*
@@ -450,6 +461,24 @@ namespace ButtplugValley
                 this.Monitor.Log($"VIBRATING FOR {duration} milliseconds", LogLevel.Debug);
                 buttplugManager.VibrateDevicePulse(Config.StoneBrokenLevel, duration);
             }
+            GameLocation location = Game1.currentLocation;
+            
+            bool hasBrokenBranches = e.Removed.Any(pair =>
+            {
+                
+                if (pair.Value is StardewValley.Object obj)
+                {
+                    return obj.Name == "Twig";
+                }
+                return false;
+            });
+
+            if (hasBrokenBranches)
+            {
+                // Vibrate the device when a broken branch is found
+                this.Monitor.Log("Branch Broken", LogLevel.Debug);
+                buttplugManager.VibrateDevicePulse(Config.TreeBrokenLevel);
+            }
         }
 
         private void OnDayEnding(object sender, DayEndingEventArgs e)
@@ -493,8 +522,7 @@ namespace ButtplugValley
                         obj.Category == StardewValley.Object.FruitsCategory || 
                         obj.Category == StardewValley.Object.MilkCategory || 
                         obj.Category == StardewValley.Object.EggCategory || 
-                        obj.ParentSheetIndex == CoffeeBeansID ||
-                        obj.ParentSheetIndex == WoolID)
+                        obj.ParentSheetIndex is CoffeeBeansID or WoolID)
                     {
                         
                         if (!Config.VibrateOnCropAndMilkCollected) return;
@@ -510,12 +538,23 @@ namespace ButtplugValley
                         break; // Exit the loop after the first harvested crop is found
                     }
                     if (obj.Category == StardewValley.Object.GreensCategory ||
-                        obj.Category == StardewValley.Object.sellAtFishShopCategory)
+                        obj.Category == StardewValley.Object.sellAtFishShopCategory ||
+                        obj.parentSheetIndex == 771) //771 is fiber i think
                     {
                         if (!Config.VibrateOnForagingCollected) return;
                         this.Monitor.Log("Foraging Added", LogLevel.Debug);
                         VibrateBasedOnQuality(obj, Config.ForagingBasic);
                         break; // Exit the loop after the first harvested crop is found
+                    }
+                    if (obj.Category == StardewValley.Object.metalResources || obj.parentSheetIndex == 390) //390 is stone
+                    {
+                        if (Config.StonePickedUpDebug)
+                        {
+                            //THIS IS TEMPORARY CODE FOR TESTING PURPOSES ==============================================================================================================
+                            double durationmath = 3920 / (1 + (10 * Math.Exp(-0.16 * 1)));
+                            buttplugManager.VibrateDevicePulse(Config.StoneBrokenLevel, Convert.ToInt32(durationmath));
+                            break;
+                        }
                     }
                 }
             }
@@ -524,18 +563,30 @@ namespace ButtplugValley
                 // Check if the changed item is a fish
                 if (change.Item is StardewValley.Object obj)
                 {
-                    this.Monitor.Log($"Changed Item: {obj.Name}, Category: {obj.getCategoryName()}, Category Id: {obj.Category}", LogLevel.Debug);
+                    //this.Monitor.Log($"Changed Item: {obj.Name}, Category: {obj.getCategoryName()}, Category Id: {obj.Category}", LogLevel.Debug);
                     if (obj.Category == StardewValley.Object.FishCategory)
                     {
                         if (!Config.VibrateOnFishCollected) return;
                         VibrateBasedOnQuality(obj, Config.FishCollectedBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
+
+                    if (obj.Category == StardewValley.Object.metalResources || obj.parentSheetIndex == 390) //390 is stone
+                    {
+                        if (Config.StonePickedUpDebug)
+                        {
+                            //THIS IS TEMPORARY CODE FOR TESTING PURPOSES ===================================================================================================================================
+                            double durationmath = 3920 / (1 + (10 * Math.Exp(-0.16 * 1)));
+                            buttplugManager.VibrateDevicePulse(Config.StoneBrokenLevel, Convert.ToInt32(durationmath));
+                            break;
+                        }
+                    }
+                    
                     if (obj.Category == StardewValley.Object.VegetableCategory ||
                         obj.Category == StardewValley.Object.FruitsCategory ||
                         obj.Category == StardewValley.Object.MilkCategory ||
                         obj.Category == StardewValley.Object.EggCategory ||
-                        obj.ParentSheetIndex == CoffeeBeansID)
+                        obj.ParentSheetIndex is CoffeeBeansID or WoolID)
                     {
                         if (!Config.VibrateOnCropAndMilkCollected) return;
                         this.Monitor.Log("Crop or Milk Changed", LogLevel.Debug);
@@ -744,5 +795,6 @@ namespace ButtplugValley
         {
             buttplugManager.DisconnectButtplug();
         }
+        
     }
 }

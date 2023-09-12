@@ -22,6 +22,9 @@ namespace ButtplugValley
         
         public bool VibrateOnDialogue { get; set; } = true;
         
+        //DEBUG TEMP STUFF
+        public bool StonePickedUpDebug { get; set; } = true;
+        
         
         public int StoneBrokenLevel { get; set; } = 35;
         public int DamageTakenMax { get; set; } = 100;
