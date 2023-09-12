@@ -45,8 +45,7 @@ namespace ButtplugValley
             {
                 await buttplugManager.ConnectButtplug(Monitor, Config.IntifaceIP);
                 await buttplugManager.ScanForDevices();
-                SendToDiscord("Buttplug Valley Connected");
-                
+
             });
 
             helper.Events.Input.ButtonPressed += OnButtonPressed;
@@ -60,6 +59,9 @@ namespace ButtplugValley
             helper.Events.World.NpcListChanged += OnNpcListChanged;
             helper.Events.Player.LevelChanged += OnLevelChanged;
             helper.Events.Display.MenuChanged += OnMenuChanged;
+            
+            helper.Events.Multiplayer.ModMessageReceived += this.OnModMessageReceived;
+            helper.ConsoleCommands.Add("SendVibe", "Usage: SendVibe [strength] [duration]", this.SendVibeCommand);
 
             // var harmony = new Harmony(this.ModManifest.UniqueID);
             //
@@ -69,6 +71,57 @@ namespace ButtplugValley
             //     postfix: new HarmonyMethod(typeof(ModEntry), nameof(ModEntry.Kissing_Postfix))
             // );
         }
+
+        //TODO: THIS IS DEV TESTING ONLY
+
+
+        private void OnModMessageReceived(object sender, ModMessageReceivedEventArgs e)
+        {
+            if (e.FromModID == this.ModManifest.UniqueID && e.Type == "ExecuteVibe")
+            {
+                // Read the received message as a VibeMessage
+                VibeMessage message = e.ReadAs<VibeMessage>();
+
+                // Call the Vibe function with the received data
+                this.Vibe(message.Strength, message.Duration);
+                Monitor.Log("Vibe Command Received", LogLevel.Debug);
+            }
+        }
+        
+        private void Vibe(int strength, int duration)
+        {
+            // Implement the Vibe function logic here
+            buttplugManager.VibrateDevicePulse(strength, duration);
+        }
+
+        //TODO: THIS IS DEV TESTING ONLY
+        private void SendVibeCommand(string command, string[] args)
+        {
+            // Check if the correct number of arguments is provided
+            if (args.Length != 2)
+            {
+                Monitor.Log("Invalid usage. Usage: SendVibe [Strength] [Duration]", LogLevel.Error);
+                return;
+            }
+
+            // Parse the Strength and Duration arguments
+            if (int.TryParse(args[0], out int strength) && int.TryParse(args[1], out int duration))
+            {
+                // Create a VibeMessage instance with the parsed data
+                VibeMessage message = new VibeMessage(strength, duration);
+
+                // Send the VibeMessage using mod message
+                this.Helper.Multiplayer.SendMessage(message, "ExecuteVibe");
+                Vibe(strength, duration);
+                Monitor.Log("SENT command", LogLevel.Debug);
+            }
+            else
+            {
+                Monitor.Log("Invalid arguments. Usage: SendVibe [Strength] [Duration]", LogLevel.Error);
+            }
+        }
+
+
         private static void Kissing_Postfix()
         {
             //This code is suposed to be ran every time the player kisses another player, but the vibrations do not work.
@@ -795,6 +848,17 @@ namespace ButtplugValley
         {
             buttplugManager.DisconnectButtplug();
         }
-        
+
+    }
+    public class VibeMessage
+    {
+        public int Strength { get; set; }
+        public int Duration { get; set; }
+
+        public VibeMessage(int strength, int duration)
+        {
+            Strength = strength;
+            Duration = duration;
+        }
     }
 }
