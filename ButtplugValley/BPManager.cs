@@ -158,7 +158,7 @@ namespace ButtplugValley
             await VibrateDevice(0);
         }
 
-        private async void SendToDiscord(string message)
+        public async void SendToDiscord(string message)
         {
             if (!_logDiscord) return;
             

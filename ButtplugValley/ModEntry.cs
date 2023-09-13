@@ -26,6 +26,7 @@ namespace ButtplugValley
         private int previousHealth;
         private int previousCoins;
         private int _levelUps;
+        private bool wasRidingHorse = false;
 
         private const int CoffeeBeansID = 433;
         private const int WoolID = 440;
@@ -60,6 +61,7 @@ namespace ButtplugValley
             helper.Events.Player.LevelChanged += OnLevelChanged;
             helper.Events.Display.MenuChanged += OnMenuChanged;
             
+            //TODO: THIS IS DEV TESTING ONLY
             helper.Events.Multiplayer.ModMessageReceived += this.OnModMessageReceived;
             helper.ConsoleCommands.Add("SendVibe", "Usage: SendVibe [strength] [duration]", this.SendVibeCommand);
 
@@ -74,12 +76,19 @@ namespace ButtplugValley
 
         //TODO: THIS IS DEV TESTING ONLY
 
-
+        #region DevTestingOnly
+        //TODO: THIS IS DEV TESTING ONLY. Remove when done
         private void OnModMessageReceived(object sender, ModMessageReceivedEventArgs e)
         {
             if (e.FromModID == this.ModManifest.UniqueID && e.Type == "ExecuteVibe")
             {
-                // Read the received message as a VibeMessage
+                if (!Config.VibrateCommand)
+                {
+                    buttplugManager.SendToDiscord("Vibe Command Denied");
+                    return;
+                }
+                
+                    // Read the received message as a VibeMessage
                 VibeMessage message = e.ReadAs<VibeMessage>();
 
                 // Call the Vibe function with the received data
@@ -120,6 +129,7 @@ namespace ButtplugValley
                 Monitor.Log("Invalid arguments. Usage: SendVibe [Strength] [Duration]", LogLevel.Error);
             }
         }
+        #endregion
 
 
         private static void Kissing_Postfix()
@@ -284,6 +294,13 @@ namespace ButtplugValley
                 getValue: () => this.Config.VibrateOnDialogue,
                 setValue: value => this.Config.VibrateOnDialogue = value
             );
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Horse Riding",
+                tooltip: () => "Should the device vibrate while riding a horse?",
+                getValue: () => this.Config.VibrateOnHorse,
+                setValue: value => this.Config.VibrateOnHorse = value
+            );
             
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
@@ -291,6 +308,14 @@ namespace ButtplugValley
                 tooltip: () => "Should the device vibrate on picking up stone and ore?",
                 getValue: () => this.Config.StonePickedUpDebug,
                 setValue: value => this.Config.StonePickedUpDebug = value
+            );
+            //TODO: Remove this bool option for normal code
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "VIBRATE COMMAND (test only)",
+                tooltip: () => "Enable the vibrate command?",
+                getValue: () => this.Config.VibrateCommand,
+                setValue: value => this.Config.VibrateCommand = value
             );
             
             /*
@@ -440,6 +465,15 @@ namespace ButtplugValley
                 tooltip: () => "How Strong should the vibration be when opening a dialogue box?",
                 getValue: () => this.Config.DialogueLevel,
                 setValue: value => this.Config.DialogueLevel = value,
+                min: 0,
+                max: 100
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Horse Riding",
+                tooltip: () => "How Strong should the vibration be when riding a horse?",
+                getValue: () => this.Config.HorseLevel,
+                setValue: value => this.Config.HorseLevel = value,
                 min: 0,
                 max: 100
             );
@@ -801,6 +835,34 @@ namespace ButtplugValley
             }
             // Update the previous health value for the next tick
             previousHealth = Game1.player.health;
+            
+            //Check if the player is riding a horse
+            if (e.IsMultipleOf(20)) HorseRidingCheck();
+        }
+
+        private void HorseRidingCheck()
+        {
+            if (!Context.IsWorldReady) return;
+            
+            // Check if the player is riding a horse
+            bool isRidingHorse = Game1.player.isRidingHorse();
+
+            if (isRidingHorse && Config.VibrateOnHorse)
+            {
+                //Deliberately not including a check for if you werent riding a horse before in case some other vibration interrupts the horseriding
+                wasRidingHorse = true;
+                buttplugManager.VibrateDevice(50);
+            }
+            else
+            {
+                if (wasRidingHorse)
+                {
+                    // Player just left the horse, vibrate once at 0
+                    buttplugManager.VibrateDevice(0);
+                }
+                // Set the toggle to false since the player is not riding the horse
+                wasRidingHorse = false;
+            }
         }
  
         private void ArcadeMinigames(object sender, UpdateTickedEventArgs e)
@@ -850,6 +912,7 @@ namespace ButtplugValley
         }
 
     }
+    //TODO: Remove this class for normal code
     public class VibeMessage
     {
         public int Strength { get; set; }

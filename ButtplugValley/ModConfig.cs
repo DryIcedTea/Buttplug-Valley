@@ -22,8 +22,13 @@ namespace ButtplugValley
         
         public bool VibrateOnDialogue { get; set; } = true;
         
+        public bool VibrateOnHorse { get; set; } = true;
+        
         //DEBUG TEMP STUFF
         public bool StonePickedUpDebug { get; set; } = true;
+        
+        //TODO: Remove this when done testing
+        public bool VibrateCommand { get; set; } = true;
         
         
         public int StoneBrokenLevel { get; set; } = 35;
@@ -41,10 +46,9 @@ namespace ButtplugValley
         public int DayStartLevel { get; set; } = 50;
         public int DayEndMax { get; set; } = 100;
         public int MaxFishingVibration { get; set; } = 100;
-
         public int ArcadeLevel { get; set; } = 50;
-        
         public int DialogueLevel { get; set; } = 50;
+        public int HorseLevel { get; set; } = 50;
         
         public SButton StopVibrations { get; set; } = SButton.P;
         public SButton DisconnectButtplug { get; set; } = SButton.I;
