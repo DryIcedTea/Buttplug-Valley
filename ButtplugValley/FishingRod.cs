@@ -15,6 +15,7 @@ namespace ButtplugValley
         private bool isActive = true;
         private float maxVibration = 100f; // Adjust as desired
 
+        private bool wasCasting = false;
         private bool wasNibbling = false;
         private bool wasHit = false;
 
@@ -36,18 +37,16 @@ namespace ButtplugValley
                 if (!rod.inUse())
                 {
                     _monitor.Log("reset fishing rod", LogLevel.Trace);
-                    wasNibbling = false;
-                    wasHit = false;
+                    ResetFishingStages();
                     return;
                 }
                 if (hasFailedCatch())
                 {
                     _monitor.Log("Fail to catch fish", LogLevel.Debug);
                     Miss(rod);
-                    wasNibbling = false;
+                    ResetFishingStages();
                 }    
                 
-                _monitor.Log("FishingRodIsActive", LogLevel.Debug);
                 maxVibration = _modConfig.MaxFishingVibration;
 
                 Casting(rod);
@@ -72,10 +71,12 @@ namespace ButtplugValley
             if (rod.isTimingCast)
             {
                 _ = _bpManager.VibrateDevice(maxVibration * 0.5f * rod.castingPower);
+                wasCasting = true;
             }
-            else if (rod.castedButBobberStillInAir)
+            else if (wasCasting)
             {
                 _ = _bpManager.VibrateDevice(0f);
+                wasCasting = false;
             }
             
         }
@@ -96,7 +97,7 @@ namespace ButtplugValley
                 }
                 else if (ticks % 110 == 0)
                 {
-                    _ = _bpManager.VibrateDevicePulse(maxVibration * 0.2f, 100);
+                    _ = _bpManager.VibrateDevicePulse(maxVibration * 0.1f, 200);
                 }
             }
         }
@@ -126,6 +127,15 @@ namespace ButtplugValley
                 await Task.Delay(400);
                 await _bpManager.VibrateDevicePulse(maxVibration * .1f, 500);
             });
+        }
+
+        /// <summary>
+        /// Reset private variables that change during the fishing process
+        /// </summary>
+        private void ResetFishingStages()
+        {
+            wasNibbling = false;
+            wasHit = false;
         }
     }
 }
