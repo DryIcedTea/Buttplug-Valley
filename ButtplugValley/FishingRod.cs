@@ -88,17 +88,16 @@ namespace ButtplugValley
         /// <param name="ticks">time since start of game</param>
         private void Nibbling(StardewValley.Tools.FishingRod rod, uint ticks)
         {
-            if (!wasNibbling)
+            if (wasNibbling) return;
+
+            if (rod.isNibbling)
             {
-                if (rod.isNibbling)
-                {
-                    _ = _bpManager.VibrateDevicePulse(maxVibration * .8f);
-                    wasNibbling = true;
-                }
-                else if (ticks % 110 == 0)
-                {
-                    _ = _bpManager.VibrateDevicePulse(maxVibration * 0.1f, 200);
-                }
+                _ = _bpManager.VibrateDevicePulse(maxVibration * .8f);
+                wasNibbling = true;
+            }
+            else if (ticks % 110 == 0)
+            {
+                _ = _bpManager.VibrateDevicePulse(maxVibration * 0.1f, 200);
             }
         }
 
