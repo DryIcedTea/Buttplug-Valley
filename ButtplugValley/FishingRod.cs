@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using StardewModdingAPI.Utilities;
 using StardewValley;
 
 namespace ButtplugValley
@@ -10,9 +9,9 @@ namespace ButtplugValley
     internal class FishingRod
     {
         private BPManager _bpManager;
-        private ModConfig modConfig;
-        private IModHelper helper;
-        private IMonitor monitor;
+        private ModConfig _modConfig;
+        private IModHelper _helper;
+        private IMonitor _monitor;
         private bool isActive = true;
         private float maxVibration = 100f; // Adjust as desired
 
@@ -21,36 +20,45 @@ namespace ButtplugValley
 
         public FishingRod(IModHelper modHelper, IMonitor MeMonitor, BPManager MEbpManager, ModConfig ModConfig)
         {
-            helper = modHelper;
-            monitor = MeMonitor;
-            modConfig = ModConfig;
+            _helper = modHelper;
+            _monitor = MeMonitor;
+            _modConfig = ModConfig;
             _bpManager = MEbpManager;
-            helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
+            _helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
         }
 
         private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            isActive = modConfig.VibrateOnFishingRodUsage;
+            isActive = _modConfig.VibrateOnFishingRodUsage;
             if (!isActive) return;
             if (Game1.player.CurrentTool is StardewValley.Tools.FishingRod rod)
             {
                 if (!rod.inUse())
                 {
+                    _monitor.Log("reset fishing rod", LogLevel.Trace);
                     wasNibbling = false;
                     wasHit = false;
                     return;
                 }
-                if (rod.timeUntilFishingNibbleDone < 0 && wasNibbling && !wasHit)
+                if (hasFailedCatch())
                 {
+                    _monitor.Log("Fail to catch fish", LogLevel.Debug);
                     Miss(rod);
                     wasNibbling = false;
                 }    
-                monitor.Log("FishingRodIsActive", LogLevel.Debug);
-                maxVibration = modConfig.MaxFishingVibration;
+                
+                _monitor.Log("FishingRodIsActive", LogLevel.Debug);
+                maxVibration = _modConfig.MaxFishingVibration;
+
                 Casting(rod);
                 Nibbling(rod, e.Ticks);
                 Hit(rod);
-                
+
+            }
+
+            bool hasFailedCatch()
+            {
+                return rod.timeUntilFishingNibbleDone < 0 && wasNibbling && !wasHit;
             }
             
         }
@@ -91,7 +99,6 @@ namespace ButtplugValley
                     _ = _bpManager.VibrateDevicePulse(maxVibration * 0.2f, 100);
                 }
             }
-            
         }
 
         /// <summary>
