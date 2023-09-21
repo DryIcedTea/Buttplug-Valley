@@ -55,6 +55,9 @@ namespace ButtplugValley
 
             }
 
+            /// <summary>
+            /// logic checks needed to detect if a player has missed catching a fish
+            /// </summary>
             bool hasFailedCatch()
             {
                 return rod.timeUntilFishingNibbleDone < 0 && wasNibbling && !wasHit;
