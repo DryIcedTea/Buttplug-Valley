@@ -61,9 +61,6 @@ namespace ButtplugValley
             helper.Events.Player.LevelChanged += OnLevelChanged;
             helper.Events.Display.MenuChanged += OnMenuChanged;
             
-            //TODO: THIS IS DEV TESTING ONLY
-            helper.Events.Multiplayer.ModMessageReceived += this.OnModMessageReceived;
-            helper.ConsoleCommands.Add("SendVibe", "Usage: SendVibe [strength] [duration]", this.SendVibeCommand);
 
             // var harmony = new Harmony(this.ModManifest.UniqueID);
             //
@@ -73,65 +70,7 @@ namespace ButtplugValley
             //     postfix: new HarmonyMethod(typeof(ModEntry), nameof(ModEntry.Kissing_Postfix))
             // );
         }
-
-        //TODO: THIS IS DEV TESTING ONLY
-
-        #region DevTestingOnly
-        //TODO: THIS IS DEV TESTING ONLY. Remove when done
-        private void OnModMessageReceived(object sender, ModMessageReceivedEventArgs e)
-        {
-            if (e.FromModID == this.ModManifest.UniqueID && e.Type == "ExecuteVibe")
-            {
-                if (!Config.VibrateCommand)
-                {
-                    buttplugManager.SendToDiscord("Vibe Command Denied");
-                    return;
-                }
-                
-                    // Read the received message as a VibeMessage
-                VibeMessage message = e.ReadAs<VibeMessage>();
-
-                // Call the Vibe function with the received data
-                this.Vibe(message.Strength, message.Duration);
-                Monitor.Log("Vibe Command Received", LogLevel.Debug);
-            }
-        }
         
-        private void Vibe(int strength, int duration)
-        {
-            // Implement the Vibe function logic here
-            buttplugManager.VibrateDevicePulse(strength, duration);
-        }
-
-        //TODO: THIS IS DEV TESTING ONLY
-        private void SendVibeCommand(string command, string[] args)
-        {
-            // Check if the correct number of arguments is provided
-            if (args.Length != 2)
-            {
-                Monitor.Log("Invalid usage. Usage: SendVibe [Strength] [Duration]", LogLevel.Error);
-                return;
-            }
-
-            // Parse the Strength and Duration arguments
-            if (int.TryParse(args[0], out int strength) && int.TryParse(args[1], out int duration))
-            {
-                // Create a VibeMessage instance with the parsed data
-                VibeMessage message = new VibeMessage(strength, duration);
-
-                // Send the VibeMessage using mod message
-                this.Helper.Multiplayer.SendMessage(message, "ExecuteVibe");
-                Vibe(strength, duration);
-                Monitor.Log("SENT command", LogLevel.Debug);
-            }
-            else
-            {
-                Monitor.Log("Invalid arguments. Usage: SendVibe [Strength] [Duration]", LogLevel.Error);
-            }
-        }
-        #endregion
-
-
         private static void Kissing_Postfix()
         {
             //This code is suposed to be ran every time the player kisses another player, but the vibrations do not work.
@@ -302,22 +241,14 @@ namespace ButtplugValley
                 setValue: value => this.Config.VibrateOnHorse = value
             );
             
-            configMenu.AddBoolOption(
-                mod: this.ModManifest,
-                name: () => "STONE PICK UP (Test version only)",
-                tooltip: () => "Should the device vibrate on picking up stone and ore?",
-                getValue: () => this.Config.StonePickedUpDebug,
-                setValue: value => this.Config.StonePickedUpDebug = value
-            );
-            //TODO: Remove this bool option for normal code
-            configMenu.AddBoolOption(
-                mod: this.ModManifest,
-                name: () => "VIBRATE COMMAND (test only)",
-                tooltip: () => "Enable the vibrate command?",
-                getValue: () => this.Config.VibrateCommand,
-                setValue: value => this.Config.VibrateCommand = value
-            );
-            
+            // configMenu.AddBoolOption(
+            //     mod: this.ModManifest,
+            //     name: () => "STONE PICK UP (Test version only)",
+            //     tooltip: () => "Should the device vibrate on picking up stone and ore?",
+            //     getValue: () => this.Config.StonePickedUpDebug,
+            //     setValue: value => this.Config.StonePickedUpDebug = value
+            // );
+
             /*
              * 
              * VIBRATION LEVELS
@@ -911,17 +842,5 @@ namespace ButtplugValley
             buttplugManager.DisconnectButtplug();
         }
 
-    }
-    //TODO: Remove this class for normal code
-    public class VibeMessage
-    {
-        public int Strength { get; set; }
-        public int Duration { get; set; }
-
-        public VibeMessage(int strength, int duration)
-        {
-            Strength = strength;
-            Duration = duration;
-        }
     }
 }

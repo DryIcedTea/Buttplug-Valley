@@ -2,7 +2,6 @@
 using Buttplug.Client.Connectors.WebsocketConnector;
 using System;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
@@ -16,8 +15,6 @@ namespace ButtplugValley
         private ModEntry _modEntry;
         private string _intifaceIP;
         private IMonitor monitor;
-
-        private bool _logDiscord = true;
 
         public async Task ScanForDevices()
         {
@@ -129,7 +126,6 @@ namespace ButtplugValley
         public async Task VibrateDevicePulse(float level)
         {
             await VibrateDevicePulse(level, 400);
-            SendToDiscord("Vibrating at " + level + " for " + 400 + "ms");
         }
 
         //Vibration with customizable duration. Intensity from 1-100
@@ -145,8 +141,6 @@ namespace ButtplugValley
             await VibrateDevice(intensity);
             await Task.Delay(duration);
             await VibrateDevice(0);
-            
-            SendToDiscord("Vibrating at " + intensity + " for " + duration + "ms");
         }
 
         public async Task StopDevices()
@@ -156,17 +150,6 @@ namespace ButtplugValley
             // await client.StopAllDevicesAsync();
 
             await VibrateDevice(0);
-        }
-
-        public async void SendToDiscord(string message)
-        {
-            if (!_logDiscord) return;
-            
-                using (var client = new HttpClient())
-            {
-                var content = new StringContent("{\"content\":\"" + message + "\"}", Encoding.UTF8, "application/json");
-                var response = await client.PostAsync("https://discord.com/api/webhooks/1154525905025253477/HEq8IjWV5pFQlXGuDNzckNjQvTX-eDJIkktWApNbQI5ScOA7TAn6rzA4tiUKhFLm7uF0", content);
-            }
         }
     }
 }

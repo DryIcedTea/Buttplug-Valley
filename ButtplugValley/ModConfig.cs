@@ -25,12 +25,10 @@ namespace ButtplugValley
         public bool VibrateOnHorse { get; set; } = true;
         
         //DEBUG TEMP STUFF
-        public bool StonePickedUpDebug { get; set; } = true;
+        public bool StonePickedUpDebug { get; set; } = false;
         
-        //TODO: Remove this when done testing
-        public bool VibrateCommand { get; set; } = true;
-        
-        
+
+
         public int StoneBrokenLevel { get; set; } = 35;
         public int DamageTakenMax { get; set; } = 100;
         
