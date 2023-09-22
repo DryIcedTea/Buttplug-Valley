@@ -169,6 +169,13 @@ namespace ButtplugValley
                 getValue: () => this.Config.VibrateOnArcade,
                 setValue: value => this.Config.VibrateOnArcade = value
             );
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Keep Alive Pulse",
+                tooltip: () => "Vibrate every 30s to keep connection alive?",
+                getValue: () => this.Config.KeepAlive,
+                setValue: value => this.Config.KeepAlive = value
+            );
             /*
              * VIBRATION LEVELS
              */
@@ -287,6 +294,25 @@ namespace ButtplugValley
                 tooltip: () => "How Strong should the vibration be in the arcade minigames?",
                 getValue: () => this.Config.ArcadeLevel,
                 setValue: value => this.Config.ArcadeLevel = value,
+                min: 0,
+                max: 100
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Keep Alive Interval",
+                tooltip: () => "How frequently should the Keep alive signal be sent (in seconds)",
+                getValue: () => this.Config.KeepAliveInterval,
+                setValue: value => this.Config.KeepAliveInterval = value,
+                min: 5,
+                max: 300,
+                interval: 5
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Keep Alive Intensity",
+                tooltip: () => "How strong should the keep alive vibration be?",
+                getValue: () => this.Config.KeepAliveLevel,
+                setValue: value => this.Config.KeepAliveLevel = value,
                 min: 0,
                 max: 100
             );
@@ -566,6 +592,15 @@ namespace ButtplugValley
             }
             // Update the previous health value for the next tick
             previousHealth = Game1.player.health;
+
+
+            // Vibrate the plug for keepalive
+            if (e.IsMultipleOf((uint)Config.KeepAliveInterval*60))
+            {
+                if (!Config.KeepAlive) return;
+                int duration = 250;
+                buttplugManager.VibrateDevicePulse(Config.KeepAliveLevel, duration);
+            }
         }
  
         private void ArcadeMinigames(object sender, UpdateTickedEventArgs e)
