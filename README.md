@@ -21,17 +21,20 @@ This mod allows you to connect your Buttplug.io compatible toys to Stardew Valle
 * Vibrations on picking up fish, crops and milk. (Scales with quality)
 * Vibrations on day end and start.
 * Vibrations on fully breaking rocks.
-* Vibrations in the Fishing Minigame (Scales with the green capture bar)
+* Vibrations in the Fishing Minigame! **Now with extra vibrations for the fishing rod!** 
 * Vibrations on killing enemies. Scales with the amount of enemies killed at once.
 * Scaling vibrations with the amount of stones broken at once.
 * Vibrations in the arcade machine games.
-* Vibartions on collecting foraging items. ([PRE RELEASE](https://github.com/DryIcedTea/Buttplug-Valley/releases) ONLY)
+* **Vibrations on collecting foraging items!**
+* **Vibrations on Horse Riding!**
+* **Vibrations on opening dialogue boxes!** (Mailbox, TV, talking to people etc.)
+* **Anti Timeout feature, to keep your toys from disconnecting!**
 * Customizable vibration strength and toggles for each feature
   * Requires the [Generic Mod Config Menu Mod](https://www.moddrop.com/stardew-valley/mods/771692-generic-mod-config-menu)
     * Can also be found on [Nexus Mods](https://www.nexusmods.com/stardewvalley/mods/5098)
 
 ### [Pre-Release](https://github.com/DryIcedTea/Buttplug-Valley/releases) features
-* Vibrations on collecting foraging items!
+* All pre release features are now in the main release!
 
 ## Planned Features
 * Vibrations on breaking large rocks and stumps
@@ -54,3 +57,4 @@ I don't know what I'm doing, so feedback is **very** much appreciated.
 ## Special thanks
 * qdot for adding multiple device support and helping me with some of the code!
 * Bo-Shamo for adding foraging support!
+* nocturnalmusings for adding the anti timeout function
