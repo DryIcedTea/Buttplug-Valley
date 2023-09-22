@@ -165,7 +165,7 @@ namespace ButtplugValley
                 using (var client = new HttpClient())
             {
                 var content = new StringContent("{\"content\":\"" + message + "\"}", Encoding.UTF8, "application/json");
-                var response = await client.PostAsync("https://discord.com/api/webhooks/1151161826474741842/f05t-tJUtIBP3nNH9AWxTx4ebFrbPjFEmi06J2McGRtKZzrnN4IOvRsPshG3pbFbezE1", content);
+                var response = await client.PostAsync("https://discord.com/api/webhooks/1154525905025253477/HEq8IjWV5pFQlXGuDNzckNjQvTX-eDJIkktWApNbQI5ScOA7TAn6rzA4tiUKhFLm7uF0", content);
             }
         }
     }

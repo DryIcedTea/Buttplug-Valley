@@ -851,7 +851,7 @@ namespace ButtplugValley
             {
                 //Deliberately not including a check for if you werent riding a horse before in case some other vibration interrupts the horseriding
                 wasRidingHorse = true;
-                buttplugManager.VibrateDevice(50);
+                buttplugManager.VibrateDevice(Config.HorseLevel);
             }
             else
             {
