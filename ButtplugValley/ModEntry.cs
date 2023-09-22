@@ -42,6 +42,7 @@ namespace ButtplugValley
             this.Config = this.Helper.ReadConfig<ModConfig>();
             buttplugManager = new BPManager();
             fishingMinigame = new FishingMinigame(helper, Monitor, buttplugManager);
+            new FishingRod(helper, Monitor, buttplugManager, Config);
             Task.Run(async () =>
             {
                 await buttplugManager.ConnectButtplug(Monitor, Config.IntifaceIP);
@@ -218,6 +219,13 @@ namespace ButtplugValley
                 tooltip: () => "Should the device vibrate in the fishing minigame? Scales with the capture bar",
                 getValue: () => this.Config.VibrateOnFishingMinigame,
                 setValue: value => this.Config.VibrateOnFishingMinigame = value
+            );
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Fishing Rod",
+                tooltip: () => "Should the device vibrate when using fishing rod",
+                getValue: () => this.Config.VibrateOnFishingRodUsage,
+                setValue: value => this.Config.VibrateOnFishingRodUsage = value
             );
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
