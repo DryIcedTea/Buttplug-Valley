@@ -2,6 +2,7 @@
 using Buttplug.Client.Connectors.WebsocketConnector;
 using System;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
@@ -150,7 +151,5 @@ namespace ButtplugValley
 
             await VibrateDevice(0);
         }
-
-        // Add other methods and event handlers as needed
     }
 }
