@@ -1,4 +1,4 @@
-﻿using StardewModdingAPI;
+using StardewModdingAPI;
 
 namespace ButtplugValley
 {
@@ -31,6 +31,9 @@ namespace ButtplugValley
         
 
 
+        public bool KeepAlive { get; set; } = true;
+
+
         public int StoneBrokenLevel { get; set; } = 35;
         public int DamageTakenMax { get; set; } = 100;
         
@@ -47,6 +50,8 @@ namespace ButtplugValley
         public int DayEndMax { get; set; } = 100;
         public int MaxFishingVibration { get; set; } = 100;
         public int ArcadeLevel { get; set; } = 50;
+        public int KeepAliveInterval { get; set; } = 30;
+        public int KeepAliveLevel { get; set; } = 5;
         public int DialogueLevel { get; set; } = 50;
         public int HorseLevel { get; set; } = 50;
         

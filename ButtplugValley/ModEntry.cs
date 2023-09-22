@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -257,6 +257,13 @@ namespace ButtplugValley
             //     setValue: value => this.Config.StonePickedUpDebug = value
             // );
 
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Keep Alive Pulse",
+                tooltip: () => "Vibrate every 30s to keep connection alive?",
+                getValue: () => this.Config.KeepAlive,
+                setValue: value => this.Config.KeepAlive = value
+            );
             /*
              * 
              * VIBRATION LEVELS
@@ -417,6 +424,25 @@ namespace ButtplugValley
                 max: 100
             );
             
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Keep Alive Interval",
+                tooltip: () => "How frequently should the Keep alive signal be sent (in seconds)",
+                getValue: () => this.Config.KeepAliveInterval,
+                setValue: value => this.Config.KeepAliveInterval = value,
+                min: 5,
+                max: 300,
+                interval: 5
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Keep Alive Intensity",
+                tooltip: () => "How strong should the keep alive vibration be?",
+                getValue: () => this.Config.KeepAliveLevel,
+                setValue: value => this.Config.KeepAliveLevel = value,
+                min: 0,
+                max: 100
+            );
             /*
              * 
              * Keybinds
@@ -777,6 +803,15 @@ namespace ButtplugValley
             
             //Check if the player is riding a horse
             if (e.IsMultipleOf(20)) HorseRidingCheck();
+
+
+            // Vibrate the plug for keepalive
+            if (e.IsMultipleOf((uint)Config.KeepAliveInterval*60))
+            {
+                if (!Config.KeepAlive) return;
+                int duration = 250;
+                buttplugManager.VibrateDevicePulse(Config.KeepAliveLevel, duration);
+            }
         }
 
         private void HorseRidingCheck()
