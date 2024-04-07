@@ -118,7 +118,7 @@ namespace ButtplugValley
             {
                 // Increment the defeated enemy count
                 defeatedEnemyCount += defeatedMonsters.Count;
-                Monitor.Log($"Defeated {defeatedEnemyCount} enemies", LogLevel.Debug);
+                Monitor.Log($"Defeated {defeatedEnemyCount} enemies", LogLevel.Trace);
                 
 
                 // Vibrate the device
@@ -505,12 +505,12 @@ namespace ButtplugValley
                 // Increment the destroyed stone count
                 destroyedStoneCount += destroyedStones.Count;
                 //print the count
-                this.Monitor.Log($"DESTROYED {destroyedStoneCount} STONES", LogLevel.Debug);
+                this.Monitor.Log($"DESTROYED {destroyedStoneCount} STONES", LogLevel.Trace);
                 double durationmath = 3920 / (1 + (10 * Math.Exp(-0.16 * destroyedStoneCount)));
                 int duration = Convert.ToInt32(durationmath);
 
                 // Vibrate the device
-                this.Monitor.Log($"VIBRATING FOR {duration} milliseconds", LogLevel.Debug);
+                this.Monitor.Log($"VIBRATING FOR {duration} milliseconds", LogLevel.Trace);
                 buttplugManager.VibrateDevicePulse(Config.StoneBrokenLevel, duration);
             }
             GameLocation location = Game1.currentLocation;
@@ -528,7 +528,7 @@ namespace ButtplugValley
             if (hasBrokenBranches)
             {
                 // Vibrate the device when a broken branch is found
-                this.Monitor.Log("Branch Broken", LogLevel.Debug);
+                this.Monitor.Log("Branch Broken", LogLevel.Trace);
                 buttplugManager.VibrateDevicePulse(Config.TreeBrokenLevel);
             }
         }
@@ -562,11 +562,11 @@ namespace ButtplugValley
             {
                 if (item is StardewValley.Object obj)
                 {
-                    this.Monitor.Log($"Added Item: {obj.Name}, Category: {obj.getCategoryName()}, Category Id: {obj.Category}", LogLevel.Debug);
+                    this.Monitor.Log($"Added Item: {obj.Name}, Category: {obj.getCategoryName()}, Category Id: {obj.Category}", LogLevel.Trace);
                     if (obj.Category == StardewValley.Object.FishCategory)
                     {
                         if (!Config.VibrateOnFishCollected) return;
-                        this.Monitor.Log("Fish", LogLevel.Debug);
+                        this.Monitor.Log("Fish", LogLevel.Trace);
                         VibrateBasedOnQuality(obj, Config.FishCollectedBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
@@ -578,14 +578,14 @@ namespace ButtplugValley
                     {
                         
                         if (!Config.VibrateOnCropAndMilkCollected) return;
-                        this.Monitor.Log("Crop or Milk Added", LogLevel.Debug);
+                        this.Monitor.Log("Crop or Milk Added", LogLevel.Trace);
                         VibrateBasedOnQuality(obj, Config.CropAndMilkBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
                     if (obj.Category == StardewValley.Object.flowersCategory)
                     {
                         if (!Config.VibrateOnFlowersCollected) return;
-                        this.Monitor.Log("Flower Added", LogLevel.Debug);
+                        this.Monitor.Log("Flower Added", LogLevel.Trace);
                         VibrateBasedOnQuality(obj, Config.FlowerBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
@@ -594,7 +594,7 @@ namespace ButtplugValley
                         obj.parentSheetIndex == 771) //771 is fiber i think
                     {
                         if (!Config.VibrateOnForagingCollected) return;
-                        this.Monitor.Log("Foraging Added", LogLevel.Debug);
+                        this.Monitor.Log("Foraging Added", LogLevel.Trace);
                         VibrateBasedOnQuality(obj, Config.ForagingBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
@@ -641,14 +641,14 @@ namespace ButtplugValley
                         obj.ParentSheetIndex is CoffeeBeansID or WoolID)
                     {
                         if (!Config.VibrateOnCropAndMilkCollected) return;
-                        this.Monitor.Log("Crop or Milk Changed", LogLevel.Debug);
+                        this.Monitor.Log("Crop or Milk Changed", LogLevel.Trace);
                         VibrateBasedOnQuality(obj, Config.CropAndMilkBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
                     if (obj.Category == StardewValley.Object.flowersCategory)
                     {
                         if (!Config.VibrateOnFlowersCollected) return;
-                        this.Monitor.Log("Flower Changed", LogLevel.Debug);
+                        this.Monitor.Log("Flower Changed", LogLevel.Trace);
                         VibrateBasedOnQuality(obj, Config.FlowerBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
@@ -656,7 +656,7 @@ namespace ButtplugValley
                         obj.Category == StardewValley.Object.sellAtFishShopCategory)
                     {
                         if (!Config.VibrateOnForagingCollected) return;
-                        this.Monitor.Log("Foraging Changed", LogLevel.Debug);
+                        this.Monitor.Log("Foraging Changed", LogLevel.Trace);
                         VibrateBasedOnQuality(obj, Config.ForagingBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
@@ -694,7 +694,7 @@ namespace ButtplugValley
                         // Tree is fully chopped
                             Task.Run(async () =>
                             {
-                                this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {80}.", LogLevel.Debug);
+                                this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {80}.", LogLevel.Trace);
                                 await buttplugManager.VibrateDevice(Config.TreeBrokenLevel);
                                 await Task.Delay(420);
                                 await buttplugManager.VibrateDevice(0);
@@ -705,7 +705,7 @@ namespace ButtplugValley
                         // Large rock or stub i think
                         Task.Run(async () =>
                         {
-                            this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {80}. for 1.2 seconds", LogLevel.Debug);
+                            this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {80}. for 1.2 seconds", LogLevel.Trace);
                             await buttplugManager.VibrateDevicePulse(80, 1200);
                         });
                     }
@@ -850,7 +850,7 @@ namespace ButtplugValley
                 if (minekartLives.GetValue() < previousMinekartHealth)
                 {
                     buttplugManager.VibrateDevicePulse(Config.ArcadeLevel);
-                    this.Monitor.Log($"{Game1.player.Name} Life lost. Vibrating at {Config.ArcadeLevel}.", LogLevel.Debug);
+                    this.Monitor.Log($"{Game1.player.Name} Life lost. Vibrating at {Config.ArcadeLevel}.", LogLevel.Trace);
                 }
                 previousMinekartHealth = minekartLives.GetValue();
                 
@@ -864,7 +864,7 @@ namespace ButtplugValley
                 if (abigailLives.GetValue() != previousAbigailHealth)
                 {
                     buttplugManager.VibrateDevicePulse(Config.ArcadeLevel, 600);
-                    this.Monitor.Log($"{Game1.player.Name} Life lost. Vibrating at {Config.ArcadeLevel}.", LogLevel.Debug);
+                    this.Monitor.Log($"{Game1.player.Name} Life lost. Vibrating at {Config.ArcadeLevel}.", LogLevel.Trace);
                 }
                 previousAbigailHealth = abigailLives.GetValue();
                 
@@ -874,7 +874,7 @@ namespace ButtplugValley
                 {
                     // Coin collected, trigger vibration
                     buttplugManager.VibrateDevicePulse(Config.ArcadeLevel, 600);
-                    Monitor.Log($"{Game1.player.Name} Coin collected. Vibrating at {Config.ArcadeLevel}.", LogLevel.Debug);
+                    Monitor.Log($"{Game1.player.Name} Coin collected. Vibrating at {Config.ArcadeLevel}.", LogLevel.Trace);
                 }
                 previousCoins = currentCoins;
                 
