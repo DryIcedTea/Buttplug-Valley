@@ -140,6 +140,34 @@ namespace ButtplugValley
                 save: () => this.Helper.WriteConfig(this.Config)
             );
             
+            configMenu.AddPageLink(
+                mod: this.ModManifest,
+                pageId: "ButtplugValley.VibrationEvents",
+                text: () => "Vibration Events"
+            );
+            
+            configMenu.AddPageLink(
+                mod: this.ModManifest,
+                pageId: "ButtplugValley.VibrationLevels",
+                text: () => "Vibration Levels"
+            );
+            configMenu.AddPageLink(
+                mod: this.ModManifest,
+                pageId: "ButtplugValley.Keybinds",
+                text: () => "Keybinds"
+            );
+            configMenu.AddPageLink(
+                mod: this.ModManifest,
+                pageId: "ButtplugValley.EditIP",
+                text: () => "Edit IP"
+            ); 
+            
+            configMenu.AddPage(
+                mod: this.ModManifest,
+                pageId: "ButtplugValley.VibrationEvents",
+                pageTitle: () => "Vibration Events"
+            );
+            
             configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Vibration Events");
 
             // add some config options
@@ -269,6 +297,13 @@ namespace ButtplugValley
              * VIBRATION LEVELS
              * 
              */
+            
+            configMenu.AddPage(
+                mod: this.ModManifest,
+                pageId: "ButtplugValley.VibrationLevels",
+                pageTitle: () => "Vibration Levels"
+            );
+            
             configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Vibration Levels (0-100)");
             configMenu.AddNumberOption(
                 mod: this.ModManifest,
@@ -448,6 +483,13 @@ namespace ButtplugValley
              * Keybinds
              * 
              */
+            
+            configMenu.AddPage(
+                mod: this.ModManifest,
+                pageId: "ButtplugValley.Keybinds",
+                pageTitle: () => "Keybinds"
+            );
+            
             configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Keybinds");
             configMenu.AddKeybind(
                 mod: this.ModManifest,
@@ -476,6 +518,12 @@ namespace ButtplugValley
              * Intiface Connection
              * 
              */
+            
+            configMenu.AddPage(
+                mod: this.ModManifest,
+                pageId: "ButtplugValley.EditIP",
+                pageTitle: () => "Edit IP"
+            );
             configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Edit IP");
             configMenu.AddParagraph(mod:this.ModManifest, text: () => "Press the Reconnect keybind after saving to reconnect. Ignore this if you don't know what this is.");
             configMenu.AddTextOption(
