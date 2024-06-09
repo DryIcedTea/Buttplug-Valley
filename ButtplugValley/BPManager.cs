@@ -17,6 +17,7 @@ namespace ButtplugValley
         private ModEntry _modEntry;
         private string _intifaceIP;
         private IMonitor monitor;
+        public ModConfig config;
         
         private Queue<Task> vibrationQueue = new Queue<Task>();
                 private SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
@@ -132,6 +133,13 @@ namespace ButtplugValley
         //Short Vibration pulse. Intensity from 1-100
         public async Task VibrateDevicePulse(float level)
         {
+            if (vibrationQueue.Count >= config.QueueLength)
+            {
+                monitor.Log("Vibration queue is full, skipping", LogLevel.Debug);
+                
+                // return;
+            }
+            
             await VibrateDevicePulse(level, 400);
         }
 
@@ -142,16 +150,16 @@ namespace ButtplugValley
             {
                 return;
             }
+            
+            // Check if the queue has reached its limit.
+            if (vibrationQueue.Count >= config.QueueLength)
+            {
+                monitor.Log("Vibration queue is full, skipping", LogLevel.Debug);
+                return;
+            }
 
             float intensity = MathHelper.Clamp(level, 0f, 100f);
             monitor.Log($"VibrateDevicePulse NEW {intensity}", LogLevel.Debug);
-            
-            // // Check if the queue has reached its limit
-            // if (vibrationQueue.Count >= _modEntry.Config.QueueLength)
-            // {
-            //     monitor.Log("Vibration queue is full, skipping", LogLevel.Warn);
-            //     return;
-            // }
 
             // Create a new task that performs the vibration and add it to the queue
             vibrationQueue.Enqueue(VibrateDeviceWithDuration(intensity, duration));
@@ -162,7 +170,7 @@ namespace ButtplugValley
                 _ = Task.Run(async () =>
                 {
                     await semaphore.WaitAsync();
-
+                    
                     while (vibrationQueue.Count > 0)
                     {
                         var task = vibrationQueue.Dequeue();
