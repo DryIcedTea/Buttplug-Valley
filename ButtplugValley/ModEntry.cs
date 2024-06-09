@@ -344,6 +344,7 @@ namespace ButtplugValley
                         Task.Run(async () =>
                         {
                             //TODO: CLARIFY THAT GRASS IS FORAGING!!!!
+                            //TODO: Add debug duration for testing purposes. Send to discord user
                             this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {Config.ForagingBasic}.", LogLevel.Debug);
                             await buttplugManager.VibrateDevicePulse(Config.ForagingBasic, 300);
                         });
