@@ -1,8 +1,10 @@
 ﻿using Buttplug.Client;
 using Buttplug.Client.Connectors.WebsocketConnector;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
@@ -15,6 +17,10 @@ namespace ButtplugValley
         private ModEntry _modEntry;
         private string _intifaceIP;
         private IMonitor monitor;
+        
+        private Queue<Task> vibrationQueue = new Queue<Task>();
+                private SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
+
 
         public async Task ScanForDevices()
         {
@@ -135,12 +141,40 @@ namespace ButtplugValley
             {
                 return;
             }
-            
+
             float intensity = MathHelper.Clamp(level, 0f, 100f);
-            monitor.Log($"VibrateDevicePulse {intensity}", LogLevel.Trace);
+            monitor.Log($"VibrateDevicePulse NEW {intensity}", LogLevel.Debug);
+
+            // Create a new task that performs the vibration and add it to the queue
+            vibrationQueue.Enqueue(VibrateDeviceWithDuration(intensity, duration));
+
+            // If the semaphore is not already locked, start a new task that processes the queue
+            if (semaphore.CurrentCount > 0)
+            {
+                _ = Task.Run(async () =>
+                {
+                    await semaphore.WaitAsync();
+
+                    while (vibrationQueue.Count > 0)
+                    {
+                        var task = vibrationQueue.Dequeue();
+                        await task;
+                    }
+
+                    semaphore.Release();
+                });
+            }
+        }
+
+        private async Task VibrateDeviceWithDuration(float intensity, int duration)
+        {
             await VibrateDevice(intensity);
             await Task.Delay(duration);
-            await VibrateDevice(0);
+            monitor.Log(vibrationQueue.Count.ToString(), LogLevel.Debug);
+            if (vibrationQueue.Count == 0)
+            {
+                await VibrateDevice(0);
+            }
         }
 
         public async Task StopDevices()

@@ -737,6 +737,17 @@ namespace ButtplugValley
             {
                 foreach (var feature in e.Removed)
                 {
+                    //if feature is grass, then vibrate based on how many grass was removed
+                    if (feature.Value is Grass grass && Config.VibrateOnForagingCollected)
+                    {
+                        Monitor.Log($"Removed {feature.Value.GetType().Name}", LogLevel.Debug);
+                        Task.Run(async () =>
+                        {
+                            this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {80}.", LogLevel.Debug);
+                            await buttplugManager.VibrateDevicePulse(80, 200);
+                        });
+                    }
+                    
                     if (feature.Value is Tree tree && Config.VibrateOnTreeBroken)
                     {
                         // Tree is fully chopped
