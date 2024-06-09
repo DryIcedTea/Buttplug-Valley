@@ -71,6 +71,7 @@ namespace ButtplugValley
                 monitor.Log("Buttplug not connected, skipping", LogLevel.Debug);
                 return;
             }
+            vibrationQueue.Clear();
             monitor.Log("Disconnecting Buttplug Client", LogLevel.Info);
             // Disconnect from the buttplug.io server
             await client.DisconnectAsync();
@@ -183,7 +184,7 @@ namespace ButtplugValley
             // Once Buttplug C# v3.0.1 is out, just use this line.
             // 
             // await client.StopAllDevicesAsync();
-
+            vibrationQueue.Clear();
             await VibrateDevice(0);
         }
     }
