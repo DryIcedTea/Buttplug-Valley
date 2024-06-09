@@ -20,7 +20,7 @@ namespace ButtplugValley
     internal sealed class ModEntry : Mod
     {
         private BPManager buttplugManager;
-        private ModConfig Config;
+        public ModConfig Config;
         private FishingMinigame fishingMinigame;
         private bool isVibrating = false;
         private int previousHealth;
@@ -158,8 +158,8 @@ namespace ButtplugValley
             );
             configMenu.AddPageLink(
                 mod: this.ModManifest,
-                pageId: "ButtplugValley.EditIP",
-                text: () => "Edit IP"
+                pageId: "ButtplugValley.OtherSettings",
+                text: () => "Other Settings"
             ); 
             
             configMenu.AddPage(
@@ -521,8 +521,8 @@ namespace ButtplugValley
             
             configMenu.AddPage(
                 mod: this.ModManifest,
-                pageId: "ButtplugValley.EditIP",
-                pageTitle: () => "Edit IP"
+                pageId: "ButtplugValley.OtherSettings",
+                pageTitle: () => "Other Settings"
             );
             configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Edit IP");
             configMenu.AddParagraph(mod:this.ModManifest, text: () => "Press the Reconnect keybind after saving to reconnect. Ignore this if you don't know what this is.");
@@ -532,6 +532,17 @@ namespace ButtplugValley
                 tooltip: () => "The address used to connect to intiface. Leave default if you don't know what this is",
                 getValue: () => this.Config.IntifaceIP,
                 setValue: value => this.Config.IntifaceIP = value
+            );
+            configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Max Queued Vibrations");
+            configMenu.AddParagraph(mod:this.ModManifest, text: () => "How many vibrations can be queued up at once. Might be useful to limit this to prevent an extremely long vibration.");
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Queue Length",
+                tooltip: () => "Max amount of queued vibrations",
+                getValue: () => this.Config.QueueLength,
+                setValue: value => this.Config.QueueLength = value,
+                min: 1,
+                max: 100
             );
         }
 

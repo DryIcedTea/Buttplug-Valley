@@ -145,6 +145,13 @@ namespace ButtplugValley
 
             float intensity = MathHelper.Clamp(level, 0f, 100f);
             monitor.Log($"VibrateDevicePulse NEW {intensity}", LogLevel.Debug);
+            
+            // // Check if the queue has reached its limit
+            // if (vibrationQueue.Count >= _modEntry.Config.QueueLength)
+            // {
+            //     monitor.Log("Vibration queue is full, skipping", LogLevel.Warn);
+            //     return;
+            // }
 
             // Create a new task that performs the vibration and add it to the queue
             vibrationQueue.Enqueue(VibrateDeviceWithDuration(intensity, duration));

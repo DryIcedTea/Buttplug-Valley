@@ -60,5 +60,7 @@ namespace ButtplugValley
         public SButton ReconnectButtplug { get; set; } = SButton.K;
 
         public string IntifaceIP { get; set; } = "localhost:12345";
+        
+        public int QueueLength { get; set; } = 20;
     }
 }
