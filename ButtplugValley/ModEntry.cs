@@ -743,8 +743,9 @@ namespace ButtplugValley
                         Monitor.Log($"Removed {feature.Value.GetType().Name}", LogLevel.Debug);
                         Task.Run(async () =>
                         {
+                            //TODO: MAKE VIBRATION STRENGTH A SETTING AND CLARIFY THAT GRASS IS FORAGING!!!!
                             this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {80}.", LogLevel.Debug);
-                            await buttplugManager.VibrateDevicePulse(80, 200);
+                            await buttplugManager.VibrateDevicePulse(80, 300);
                         });
                     }
                     

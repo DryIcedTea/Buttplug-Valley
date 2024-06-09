@@ -159,6 +159,12 @@ namespace ButtplugValley
                     {
                         var task = vibrationQueue.Dequeue();
                         await task;
+                        
+                        monitor.Log(vibrationQueue.Count.ToString(), LogLevel.Debug);
+                        if (vibrationQueue.Count == 0)
+                        {
+                            await VibrateDevice(0);
+                        }
                     }
 
                     semaphore.Release();
@@ -170,11 +176,6 @@ namespace ButtplugValley
         {
             await VibrateDevice(intensity);
             await Task.Delay(duration);
-            monitor.Log(vibrationQueue.Count.ToString(), LogLevel.Debug);
-            if (vibrationQueue.Count == 0)
-            {
-                await VibrateDevice(0);
-            }
         }
 
         public async Task StopDevices()
