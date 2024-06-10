@@ -457,5 +457,26 @@ internal class ConfigMenu
                 min: 50,
                 max: 3000
             );
+            
+            configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Tree feedback duration (debug)");
+            configMenu.AddParagraph(mod:this.ModManifest, text: () => "Feedback strength for hitting and felling trees");
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Tree Hit Level",
+                tooltip: () => "Feedback strength when hitting trees",
+                getValue: () => this.Config.TreeChopLevel,
+                setValue: value => this.Config.TreeChopLevel = value,
+                min: 0,
+                max: 100
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Tree Fell Level",
+                tooltip: () => "Feedback strength when felling trees",
+                getValue: () => this.Config.TreeFellLevel,
+                setValue: value => this.Config.TreeFellLevel = value,
+                min: 0,
+                max: 100
+            );
     }
 }

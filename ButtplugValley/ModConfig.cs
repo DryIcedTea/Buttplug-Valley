@@ -64,5 +64,9 @@ namespace ButtplugValley
         public int QueueLength { get; set; } = 20;
         
         public int GrassLength { get; set; } = 400;
+        
+        public int TreeChopLevel { get; set; } = 50;
+        
+        public int TreeFellLevel { get; set; } = 100;
     }
 }

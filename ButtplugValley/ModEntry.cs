@@ -41,6 +41,8 @@ namespace ButtplugValley
         
         public static IMonitor StaticMonitor { get; private set; }
         public static BPManager StaticButtplugManager { get; private set; }
+        
+        public static ModConfig StaticConfig { get; private set; }
 
 
         public override void Entry(IModHelper helper)
@@ -59,6 +61,7 @@ namespace ButtplugValley
 
             StaticMonitor = Monitor;
             StaticButtplugManager = buttplugManager;
+            StaticConfig = Config;
             
             helper.Events.Input.ButtonPressed += OnButtonPressed;
             helper.Events.GameLoop.DayStarted += OnDayStarted;
@@ -91,21 +94,16 @@ namespace ButtplugValley
         
         public static void TreeHit_Postfix(Tree __instance)
         {
-            // The tree has been hit, handle the event here
-            // You can now use StaticMonitor and StaticButtplugManager here
             StaticMonitor.Log("Tree hit", LogLevel.Info);
-            StaticButtplugManager.VibrateDevicePulse(50, 300);
+            StaticButtplugManager.VibrateDevicePulse(StaticConfig.TreeChopLevel, 300);
             // Use StaticButtplugManager as needed
         }
 
         // This method will be called after a tree falls
         public static void TreeFall_Postfix(Tree __instance)
         {
-            // The tree has fallen, handle the event here
-            // You can now use StaticMonitor and StaticButtplugManager here
             StaticMonitor.Log("Tree fell", LogLevel.Info);
-            StaticButtplugManager.VibrateDevicePulse(100, 2000);
-            // Use StaticButtplugManager as needed
+            StaticButtplugManager.VibrateDevicePulse(StaticConfig.TreeFellLevel, 2000);
         }
 
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
