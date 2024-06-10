@@ -96,6 +96,11 @@ namespace ButtplugValley
                 original: AccessTools.Method(typeof(WateringCan), nameof(WateringCan.DoFunction)),
                 postfix: new HarmonyMethod(typeof(ModEntry), nameof(WateringCan_Postfix))
             );
+            
+            harmony.Patch(
+                original: AccessTools.Method(typeof(Hoe), nameof(Hoe.DoFunction)),
+                postfix: new HarmonyMethod(typeof(ModEntry), nameof(Hoe_Postfix))
+            );
         }
         
         public static void TreeHit_Postfix(Tree __instance)
@@ -119,6 +124,15 @@ namespace ButtplugValley
             
             StaticMonitor.Log($"Watering can used with power {power}, intensity {intensity}", LogLevel.Info);
             
+            StaticButtplugManager.VibrateDevicePulse(intensity, 300);
+        }
+        
+        public static void Hoe_Postfix(Hoe __instance, GameLocation location, int x, int y, int power, Farmer who)
+        {
+            int intensity = 25 * (power+1);
+
+            StaticMonitor.Log($"Hoe used with power {power}, intensity {intensity}", LogLevel.Info);
+
             StaticButtplugManager.VibrateDevicePulse(intensity, 300);
         }
 

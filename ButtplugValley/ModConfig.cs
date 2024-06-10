@@ -68,5 +68,9 @@ namespace ButtplugValley
         public int TreeChopLevel { get; set; } = 50;
         
         public int TreeFellLevel { get; set; } = 100;
+        
+        public int WateringCanLevel { get; set; } = 25;
+        
+        public int HoeLevel { get; set; } = 25;
     }
 }

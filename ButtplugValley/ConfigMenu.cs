@@ -469,12 +469,33 @@ internal class ConfigMenu
                 min: 0,
                 max: 100
             );
+            
             configMenu.AddNumberOption(
                 mod: this.ModManifest,
                 name: () => "Tree Fell Level",
                 tooltip: () => "Feedback strength when felling trees",
                 getValue: () => this.Config.TreeFellLevel,
                 setValue: value => this.Config.TreeFellLevel = value,
+                min: 0,
+                max: 100
+            );
+            configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Tool feedback");
+            configMenu.AddParagraph(mod:this.ModManifest, text: () => "Feedback strength for using various tools. Strength is multiplied by tool power up to a max of 100 (recommended is 25)");
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Watering can level",
+                tooltip: () => "Feedback strength when using the watering can",
+                getValue: () => this.Config.WateringCanLevel,
+                setValue: value => this.Config.WateringCanLevel = value,
+                min: 0,
+                max: 100
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Hoe level",
+                tooltip: () => "Feedback strength when using the hoe",
+                getValue: () => this.Config.HoeLevel,
+                setValue: value => this.Config.HoeLevel = value,
                 min: 0,
                 max: 100
             );
