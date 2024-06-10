@@ -445,5 +445,17 @@ internal class ConfigMenu
                 min: 1,
                 max: 100
             );
+        
+            configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Grass feedback duration (debug)");
+            configMenu.AddParagraph(mod:this.ModManifest, text: () => "The duration (in milliseconds) of feedback when cutting grass");
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Grass Duration",
+                tooltip: () => "Duration in milliseconds for cutting grass",
+                getValue: () => this.Config.GrassLength,
+                setValue: value => this.Config.GrassLength = value,
+                min: 50,
+                max: 3000
+            );
     }
 }

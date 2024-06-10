@@ -62,5 +62,7 @@ namespace ButtplugValley
         public string IntifaceIP { get; set; } = "localhost:12345";
         
         public int QueueLength { get; set; } = 20;
+        
+        public int GrassLength { get; set; } = 400;
     }
 }

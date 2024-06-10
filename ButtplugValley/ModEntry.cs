@@ -38,6 +38,10 @@ namespace ButtplugValley
         private int previousAbigailHealth;
         private int previousPowerupCount;
         private bool isGameOverAbigail = false;
+        
+        public static IMonitor StaticMonitor { get; private set; }
+        public static BPManager StaticButtplugManager { get; private set; }
+
 
         public override void Entry(IModHelper helper)
         {
@@ -53,6 +57,9 @@ namespace ButtplugValley
 
             });
 
+            StaticMonitor = Monitor;
+            StaticButtplugManager = buttplugManager;
+            
             helper.Events.Input.ButtonPressed += OnButtonPressed;
             helper.Events.GameLoop.DayStarted += OnDayStarted;
             helper.Events.GameLoop.DayEnding += OnDayEnding;
@@ -66,29 +73,39 @@ namespace ButtplugValley
             helper.Events.Display.MenuChanged += OnMenuChanged;
             
 
-            // var harmony = new Harmony(this.ModManifest.UniqueID);
-            //
-            //
-            // harmony.Patch(
-            //     original: AccessTools.Method(typeof(StardewValley.Farmer), nameof(StardewValley.Farmer.PerformKiss)),
-            //     postfix: new HarmonyMethod(typeof(ModEntry), nameof(ModEntry.Kissing_Postfix))
-            // );
+            var harmony = new Harmony(this.ModManifest.UniqueID);
+            
+            
+            // Tree hit harmony patch
+            harmony.Patch(
+                original: AccessTools.Method(typeof(Tree), nameof(Tree.performToolAction)),
+                postfix: new HarmonyMethod(typeof(ModEntry), nameof(TreeHit_Postfix))
+            );
+
+            // Tree fell harmony patch
+            harmony.Patch(
+                original: AccessTools.Method(typeof(Tree), "performTreeFall"),
+                postfix: new HarmonyMethod(typeof(ModEntry), nameof(TreeFall_Postfix))
+            );
         }
         
-        private static void Kissing_Postfix()
+        public static void TreeHit_Postfix(Tree __instance)
         {
-            //This code is suposed to be ran every time the player kisses another player, but the vibrations do not work.
-            //Not going to mess around with this anymore, but if anyone wants to make it work then that would be amazing
-            //Kissing_Postfix needs to be static which sucks
-            try
-            {
-                BPManager buttplugManager = new BPManager();
-                buttplugManager.VibrateDevicePulse(100,4000);
-            }
-            catch (Exception ex)
-            {
-                //Monitor.Log($"Failed in {nameof(Kissing_Postfix)}:\n{ex}", LogLevel.Error);
-            }
+            // The tree has been hit, handle the event here
+            // You can now use StaticMonitor and StaticButtplugManager here
+            StaticMonitor.Log("Tree hit", LogLevel.Info);
+            StaticButtplugManager.VibrateDevicePulse(50, 300);
+            // Use StaticButtplugManager as needed
+        }
+
+        // This method will be called after a tree falls
+        public static void TreeFall_Postfix(Tree __instance)
+        {
+            // The tree has fallen, handle the event here
+            // You can now use StaticMonitor and StaticButtplugManager here
+            StaticMonitor.Log("Tree fell", LogLevel.Info);
+            StaticButtplugManager.VibrateDevicePulse(100, 2000);
+            // Use StaticButtplugManager as needed
         }
 
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
@@ -346,7 +363,7 @@ namespace ButtplugValley
                             //TODO: CLARIFY THAT GRASS IS FORAGING!!!!
                             //TODO: Add debug duration for testing purposes. Send to discord user
                             this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {Config.ForagingBasic}.", LogLevel.Debug);
-                            await buttplugManager.VibrateDevicePulse(Config.ForagingBasic, 300);
+                            await buttplugManager.VibrateDevicePulse(Config.ForagingBasic, Config.GrassLength);
                         });
                     }
                     
