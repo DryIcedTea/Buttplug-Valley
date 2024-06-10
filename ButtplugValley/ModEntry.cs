@@ -13,6 +13,7 @@ using StardewValley;
 using StardewValley.Menus;
 using StardewValley.Minigames;
 using StardewValley.TerrainFeatures;
+using StardewValley.Tools;
 using Object = StardewValley.Object;
 
 namespace ButtplugValley
@@ -90,6 +91,11 @@ namespace ButtplugValley
                 original: AccessTools.Method(typeof(Tree), "performTreeFall"),
                 postfix: new HarmonyMethod(typeof(ModEntry), nameof(TreeFall_Postfix))
             );
+            
+            harmony.Patch(
+                original: AccessTools.Method(typeof(WateringCan), nameof(WateringCan.DoFunction)),
+                postfix: new HarmonyMethod(typeof(ModEntry), nameof(WateringCan_Postfix))
+            );
         }
         
         public static void TreeHit_Postfix(Tree __instance)
@@ -104,6 +110,16 @@ namespace ButtplugValley
         {
             StaticMonitor.Log("Tree fell", LogLevel.Info);
             StaticButtplugManager.VibrateDevicePulse(StaticConfig.TreeFellLevel, 2000);
+        }
+        
+        public static void WateringCan_Postfix(WateringCan __instance, GameLocation location, int x, int y, int power, Farmer who)
+        {
+            int intensity = 25 * (power+1);
+
+            
+            StaticMonitor.Log($"Watering can used with power {power}, intensity {intensity}", LogLevel.Info);
+            
+            StaticButtplugManager.VibrateDevicePulse(intensity, 300);
         }
 
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
