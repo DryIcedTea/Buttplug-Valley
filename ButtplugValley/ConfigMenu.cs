@@ -178,6 +178,14 @@ internal class ConfigMenu
                 setValue: value => this.Config.VibrateOnHorse = value
             );
             
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Keep Alive Pulse",
+                tooltip: () => "Vibrate every 30s to keep connection alive?",
+                getValue: () => this.Config.KeepAlive,
+                setValue: value => this.Config.KeepAlive = value
+            );
+            
             //DAKRSTAR MERGE STUFF HERE
             
             configMenu.AddBoolOption(
@@ -187,6 +195,9 @@ internal class ConfigMenu
                 getValue: () => this.Config.VibrateOnKiss,
                 setValue: value => this.Config.VibrateOnKiss = value
             );
+
+            configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Other mod integrations");
+            configMenu.AddParagraph(mod:this.ModManifest, text: () => "The following features only apply for Xtardew Valley, Dark Club and RainsInteractionMod");
 
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
@@ -230,13 +241,7 @@ internal class ConfigMenu
             //     setValue: value => this.Config.StonePickedUpDebug = value
             // );
 
-            configMenu.AddBoolOption(
-                mod: this.ModManifest,
-                name: () => "Keep Alive Pulse",
-                tooltip: () => "Vibrate every 30s to keep connection alive?",
-                getValue: () => this.Config.KeepAlive,
-                setValue: value => this.Config.KeepAlive = value
-            );
+
             /*
              * 
              * VIBRATION LEVELS
@@ -404,8 +409,33 @@ internal class ConfigMenu
                 max: 100
             );
             
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Keep Alive Interval",
+                tooltip: () => "How frequently should the Keep alive signal be sent (in seconds)",
+                getValue: () => this.Config.KeepAliveInterval,
+                setValue: value => this.Config.KeepAliveInterval = value,
+                min: 5,
+                max: 300,
+                interval: 5
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Keep Alive Intensity",
+                tooltip: () => "How strong should the keep alive vibration be?",
+                getValue: () => this.Config.KeepAliveLevel,
+                setValue: value => this.Config.KeepAliveLevel = value,
+                min: 0,
+                max: 100
+            );
+            
             //DARKSTAR MERGE
             
+            //TODO: ADD KISSING LEVELS HERE
+        
+            configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Other mod integrations");
+            configMenu.AddParagraph(mod:this.ModManifest, text: () => "The following features only apply for Xtardew Valley, Dark Club and RainsInteractionMod");
+
             configMenu.AddNumberOption(
                 mod: this.ModManifest,
                 name: () => "Sex Scene",
@@ -448,25 +478,7 @@ internal class ConfigMenu
             
             //END OF DARKSTAR MERGE
             
-            configMenu.AddNumberOption(
-                mod: this.ModManifest,
-                name: () => "Keep Alive Interval",
-                tooltip: () => "How frequently should the Keep alive signal be sent (in seconds)",
-                getValue: () => this.Config.KeepAliveInterval,
-                setValue: value => this.Config.KeepAliveInterval = value,
-                min: 5,
-                max: 300,
-                interval: 5
-            );
-            configMenu.AddNumberOption(
-                mod: this.ModManifest,
-                name: () => "Keep Alive Intensity",
-                tooltip: () => "How strong should the keep alive vibration be?",
-                getValue: () => this.Config.KeepAliveLevel,
-                setValue: value => this.Config.KeepAliveLevel = value,
-                min: 0,
-                max: 100
-            );
+
             /*
              * 
              * Keybinds
