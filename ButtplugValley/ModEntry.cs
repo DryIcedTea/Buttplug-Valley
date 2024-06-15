@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Reflection;
-using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HarmonyLib;
-using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -20,8 +18,9 @@ namespace ButtplugValley
 {
     internal sealed class ModEntry : Mod
     {
-        
-        public ModConfig Config;
+        private static BPManager buttplugManager;
+        private static ModConfig SConfig;
+        private ModConfig Config;
         private FishingMinigame fishingMinigame;
         private ConfigMenu configMenu;
         private bool isVibrating = false;
@@ -29,11 +28,10 @@ namespace ButtplugValley
         private int previousCoins;
         private int _levelUps;
         private bool wasRidingHorse = false;
-        private BPManager buttplugManager;
 
         private const int CoffeeBeansID = 433;
         private const int WoolID = 440;
-        
+
         //Arcade Machines
         private int previousMinekartHealth;
         private int previousAbigailHealth;
@@ -45,10 +43,16 @@ namespace ButtplugValley
         
         public static ModConfig StaticConfig { get; private set; }
 
+        private static IMonitor ModMonitor;
+
+        private readonly static string[] darkClubSounds = {"badend", "fellatio01", "fellatio02", "fellatio03", "fellatio04", "fellatio05", "fuck01", "fuck02", "fuck03"};
+        private readonly static string[] darkClubSoundsOther = {"moan01", "moan02", "moan03", "moan04", "moan05", "moan06", "moan07", "moan08", "moan09", "moan10", "moan11", "moan12", "moan13", "moan14", "moan15", "pant01", "pant02", "pant03", "pant04", "pant05"};
+
 
         public override void Entry(IModHelper helper)
         {
             this.Config = this.Helper.ReadConfig<ModConfig>();
+            SConfig = this.Config;
             buttplugManager = new BPManager();
             fishingMinigame = new FishingMinigame(helper, Monitor, buttplugManager);
             configMenu = new ConfigMenu(helper, Monitor, buttplugManager, Config, this.ModManifest);
@@ -64,6 +68,8 @@ namespace ButtplugValley
             StaticButtplugManager = buttplugManager;
             StaticConfig = Config;
             
+            ModMonitor = this.Monitor;
+
             helper.Events.Input.ButtonPressed += OnButtonPressed;
             helper.Events.GameLoop.DayStarted += OnDayStarted;
             helper.Events.GameLoop.DayEnding += OnDayEnding;
@@ -101,6 +107,24 @@ namespace ButtplugValley
                 original: AccessTools.Method(typeof(Hoe), nameof(Hoe.DoFunction)),
                 postfix: new HarmonyMethod(typeof(ModEntry), nameof(Hoe_Postfix))
             );
+            //Harmony kiss detect
+            MethodInfo originalCheckKiss = AccessTools.Method(typeof(Farmer), nameof(Farmer.PerformKiss));           
+            harmony.Patch(original: originalCheckKiss, new HarmonyMethod(typeof(ModEntry), nameof(ModEntry.Kissing_Postfix)));
+
+
+            //SV has multiple ways of playing sound, so I need to capture all the sounds
+            MethodInfo prefixCheckLocal2 = AccessTools.Method(typeof(GameLocation), nameof(GameLocation.localSound));
+            MethodInfo prefixCheckLocal = AccessTools.Method(typeof(GameLocation), nameof(GameLocation.playSound));
+            harmony.Patch(prefixCheckLocal, new HarmonyMethod(typeof(ModEntry), nameof(PlaySoundPrefix)));
+            harmony.Patch(prefixCheckLocal2, new HarmonyMethod(typeof(ModEntry), nameof(PlaySoundPrefix)));
+            var methodList = typeof(Game1).GetMethods();
+            foreach (var method in methodList)
+            {
+                if (method.Name == "playSound" && method.GetParameters().Length > 0)
+                {                  
+                    harmony.Patch(method, new HarmonyMethod(typeof(ModEntry), nameof(PlaySoundPrefix)));
+                }
+            }
         }
         
         public static void TreeHit_Postfix(Tree __instance)
@@ -126,22 +150,133 @@ namespace ButtplugValley
             
             StaticButtplugManager.VibrateDevicePulse(intensity, 300);
         }
-        
+
         public static void Hoe_Postfix(Hoe __instance, GameLocation location, int x, int y, int power, Farmer who)
         {
-            int intensity = 25 * (power+1);
+            int intensity = 25 * (power + 1);
 
             StaticMonitor.Log($"Hoe used with power {power}, intensity {intensity}", LogLevel.Info);
 
             StaticButtplugManager.VibrateDevicePulse(intensity, 300);
         }
 
-        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
+        static async void OnSoundPlayed(string cueName)
+        {                                  
+            if (SConfig.VibrateOnSexScene) {
+                // Almost all sex scenes in mods use these sounds
+                if ((cueName == "slimeHit" || cueName == "fishSlap" || cueName == "swordswipe" || cueName == "gulp") && Game1.eventUp)
+                {                 
+                    buttplugManager.VibrateDevicePulse(SConfig.SexSceneLevel, 150);
+                    return;
+                } 
+            }
+            // VibrateOnRainsInteractionMod sex sound
+            if (SConfig.VibrateOnRainsInteractionMod && cueName == "ButtHit")
+            {                
+                buttplugManager.VibrateDevicePulse(SConfig.RainsInteractionModLevel, 100);
+                return;
+            }
+            if (SConfig.VibrateOnHorse)
+            {
+                bool isRidingHorse = Game1.player.isRidingHorse();
+                if (isRidingHorse)
+                {
+                    // All step sounds while riding will be procesed as movement
+                    // Don't add this to the queue, so if it's a little laggy, it will create a different pattern
+                    if (cueName.Contains("Step"))
+                    {                       
+                        buttplugManager.VibrateDevicePulse(SConfig.HorseLevel, 100);
+                        return;
+                    }
+                }
+            }
+            if (SConfig.VibrateOnDarkClubMoans)
+            {
+                // Sounds of machines, slaves, etc.
+                foreach (string soundName in darkClubSoundsOther)
+                {
+                    if (soundName.Contains(cueName))
+                    {                        
+                        buttplugManager.VibrateDevicePulse(SConfig.DarkClubMoanLevel, 150);
+                    }
+                }
+            }
+
+            if(SConfig.VibrateOnDarkClubSex)
+            {
+                foreach (string soundName in darkClubSounds)
+                {
+                    if (soundName.Contains(cueName))
+                    {
+                        // There are multiple intensities during a sex scene separated by a number in the sound name
+                        ICue testC = Game1.soundBank.GetCue(cueName);
+                        testC.Play();
+                        string numString = Regex.Match(cueName, @"\d+\.*\d*").Value;
+                        int num = 0;
+                        if (numString != "")
+                        {
+                            num = int.Parse(numString);
+                        }
+                        double power = SConfig.MaxDarkClubSexLevel;
+                        if (num == 1)
+                        {
+                            power = Math.Round(power * 0.3);
+                        }
+                        if (num == 2)
+                        {
+                            power = Math.Round(power * 0.6);
+                        }
+
+                        // Sex sounds in this mod have usually have multiple seconds, so I need a loop with a delay
+                        // Might be interesting to put a random deley in there
+                        while (testC.IsPlaying)
+                        {
+                            if (!Game1.eventUp)
+                            {
+                                testC.Stop(AudioStopOptions.Immediate);
+                                return;
+                            }                            
+                            buttplugManager.VibrateDevicePulse((float)power, 100);
+                            await Task.Delay(300);
+                        }
+
+                    }
+                }
+            }
+        }
+        
+
+
+        // Just to merge and ignore other arguments besides the sound name
+        public static void PlaySoundPrefix(object __0)
+        {            
+            if (__0 is string soundName)
+            {
+                OnSoundPlayed(soundName);
+            }           
+        }
+
+        private static async void Kissing_Postfix()
+        {
+            try
+            {   if (SConfig.VibrateOnKiss)
+                {                   
+                    await buttplugManager.VibrateDevicePulse(100, 1000);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ModMonitor.Log($"Failed in {nameof(Kissing_Postfix)}:\n{ex}", LogLevel.Error);
+            }
+        }
+
+        private async void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
             if (e.NewMenu is DialogueBox && Config.VibrateOnDialogue)
             {
                 Monitor.Log("Dialogue Box Triggered", LogLevel.Trace);
-                buttplugManager.VibrateDevicePulse(Config.DialogueLevel, 550);
+                await buttplugManager.VibrateDevicePulse(Config.DialogueLevel, 550);
             }
         }
 
@@ -176,7 +311,7 @@ namespace ButtplugValley
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
-            this.buttplugManager.config = this.Config;
+            buttplugManager.config = this.Config;
             this.configMenu.LoadConfigMenu();
         }
 
@@ -382,19 +517,6 @@ namespace ButtplugValley
             {
                 foreach (var feature in e.Removed)
                 {
-                    //if feature is grass
-                    if (feature.Value is Grass grass && Config.VibrateOnForagingCollected)
-                    {
-                        Monitor.Log($"Removed {feature.Value.GetType().Name}", LogLevel.Debug);
-                        Task.Run(async () =>
-                        {
-                            //TODO: CLARIFY THAT GRASS IS FORAGING!!!!
-                            //TODO: Add debug duration for testing purposes. Send to discord user
-                            this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {Config.ForagingBasic}.", LogLevel.Debug);
-                            await buttplugManager.VibrateDevicePulse(Config.ForagingBasic, Config.GrassLength);
-                        });
-                    }
-                    
                     if (feature.Value is Tree tree && Config.VibrateOnTreeBroken)
                     {
                         // Tree is fully chopped
