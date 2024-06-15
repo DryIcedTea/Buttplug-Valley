@@ -178,6 +178,50 @@ internal class ConfigMenu
                 setValue: value => this.Config.VibrateOnHorse = value
             );
             
+            //DAKRSTAR MERGE STUFF HERE
+            
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "NPC Kiss",
+                tooltip: () => "Should the device vibrate while kissing?",
+                getValue: () => this.Config.VibrateOnKiss,
+                setValue: value => this.Config.VibrateOnKiss = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Sex Scene Vibration",
+                tooltip: () => "Should the device vibrate during a sex scene?",
+                getValue: () => this.Config.VibrateOnSexScene,
+                setValue: value => this.Config.VibrateOnSexScene = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "OnRainsInteractionMod Vibration",
+                tooltip: () => "Should the device vibrate during OnRainsInteractionMod sex?",
+                getValue: () => this.Config.VibrateOnRainsInteractionMod,
+                setValue: value => this.Config.VibrateOnRainsInteractionMod = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "DarkClub Moan Vibration",
+                tooltip: () => "Should the device vibrate while moan sound is played?",
+                getValue: () => this.Config.VibrateOnDarkClubMoans,
+                setValue: value => this.Config.VibrateOnDarkClubMoans = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "DarkClub Sex Vibration",
+                tooltip: () => "Should the device vibrate in DarkClub sex scenes?",
+                getValue: () => this.Config.VibrateOnDarkClubSex,
+                setValue: value => this.Config.VibrateOnDarkClubSex = value
+            );
+            
+            //END OF DARKSTAR MERGEEEE
+            
             // configMenu.AddBoolOption(
             //     mod: this.ModManifest,
             //     name: () => "STONE PICK UP (Test version only)",
@@ -359,6 +403,50 @@ internal class ConfigMenu
                 min: 0,
                 max: 100
             );
+            
+            //DARKSTAR MERGE
+            
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Sex Scene",
+                tooltip: () => "How Strong should the vibrations be during sex scenes?",
+                getValue: () => this.Config.SexSceneLevel,
+                setValue: value => this.Config.SexSceneLevel = value,
+                min: 0,
+                max: 100
+            );
+
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "RainsInteractionMod",
+                tooltip: () => "How Strong should the vibrations be during sex in RainsInteractionMod?",
+                getValue: () => this.Config.RainsInteractionModLevel,
+                setValue: value => this.Config.RainsInteractionModLevel = value,
+                min: 0,
+                max: 100
+            );
+
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "DarkClub Moan",
+                tooltip: () => "How Strong should the vibration be when moan sound is played?",
+                getValue: () => this.Config.DarkClubMoanLevel,
+                setValue: value => this.Config.DarkClubMoanLevel = value,
+                min: 0,
+                max: 100
+            );
+
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "DarkClub Sex Max",
+                tooltip: () => "How Strong should MAX vibrations be during DarkClub sex?",
+                getValue: () => this.Config.MaxDarkClubSexLevel,
+                setValue: value => this.Config.MaxDarkClubSexLevel = value,
+                min: 0,
+                max: 100
+            );
+            
+            //END OF DARKSTAR MERGE
             
             configMenu.AddNumberOption(
                 mod: this.ModManifest,
