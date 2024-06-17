@@ -178,6 +178,85 @@ internal class ConfigMenu
                 setValue: value => this.Config.VibrateOnHorse = value
             );
             
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Grass Cutting",
+                tooltip: () => "Should the device vibrate on cutting grass?",
+                getValue: () => this.Config.VibrateOnGrass,
+                setValue: value => this.Config.VibrateOnGrass = value
+            );
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Tree Hit",
+                tooltip: () => "Should the device vibrate on hitting trees?",
+                getValue: () => this.Config.VibrateOnTreeHit,
+                setValue: value => this.Config.VibrateOnTreeHit = value
+            );
+            
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Tree Felling",
+                tooltip: () => "Should the device vibrate on felling a tree?",
+                getValue: () => this.Config.VibrateOnTreeFell,
+                setValue: value => this.Config.VibrateOnTreeFell = value
+            );
+            
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "NPC Kiss",
+                tooltip: () => "Should the device vibrate while kissing?",
+                getValue: () => this.Config.VibrateOnKiss,
+                setValue: value => this.Config.VibrateOnKiss = value
+            );
+            
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Keep Alive Pulse",
+                tooltip: () => "Vibrate every 30s to keep connection alive?",
+                getValue: () => this.Config.KeepAlive,
+                setValue: value => this.Config.KeepAlive = value
+            );
+            
+            //DAKRSTAR MERGE STUFF HERE
+            
+
+            configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Other mod integrations");
+            configMenu.AddParagraph(mod:this.ModManifest, text: () => "The following features only apply for Xtardew Valley, Dark Club and RainsInteractionMod");
+
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Sex Scene Vibration",
+                tooltip: () => "Should the device vibrate during a sex scene?",
+                getValue: () => this.Config.VibrateOnSexScene,
+                setValue: value => this.Config.VibrateOnSexScene = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "OnRainsInteractionMod Vibration",
+                tooltip: () => "Should the device vibrate during OnRainsInteractionMod sex?",
+                getValue: () => this.Config.VibrateOnRainsInteractionMod,
+                setValue: value => this.Config.VibrateOnRainsInteractionMod = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "DarkClub Moan Vibration",
+                tooltip: () => "Should the device vibrate while moan sound is played?",
+                getValue: () => this.Config.VibrateOnDarkClubMoans,
+                setValue: value => this.Config.VibrateOnDarkClubMoans = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "DarkClub Sex Vibration",
+                tooltip: () => "Should the device vibrate in DarkClub sex scenes?",
+                getValue: () => this.Config.VibrateOnDarkClubSex,
+                setValue: value => this.Config.VibrateOnDarkClubSex = value
+            );
+            
+            //END OF DARKSTAR MERGEEEE
+            
             // configMenu.AddBoolOption(
             //     mod: this.ModManifest,
             //     name: () => "STONE PICK UP (Test version only)",
@@ -186,13 +265,7 @@ internal class ConfigMenu
             //     setValue: value => this.Config.StonePickedUpDebug = value
             // );
 
-            configMenu.AddBoolOption(
-                mod: this.ModManifest,
-                name: () => "Keep Alive Pulse",
-                tooltip: () => "Vibrate every 30s to keep connection alive?",
-                getValue: () => this.Config.KeepAlive,
-                setValue: value => this.Config.KeepAlive = value
-            );
+
             /*
              * 
              * VIBRATION LEVELS
@@ -370,6 +443,54 @@ internal class ConfigMenu
                 max: 300,
                 interval: 5
             );
+            
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Grass Cutting",
+                tooltip: () => "How Strong should the vibration be when cutting grass?",
+                getValue: () => this.Config.GrassLevel,
+                setValue: value => this.Config.GrassLevel = value,
+                min: 50,
+                max: 3000
+            );
+            
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Tree Hit Level",
+                tooltip: () => "How Strong should the vibration be when hitting trees?",
+                getValue: () => this.Config.TreeChopLevel,
+                setValue: value => this.Config.TreeChopLevel = value,
+                min: 0,
+                max: 100
+            );
+            
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Tree Fell Level",
+                tooltip: () => "How Strong should the vibration be when felling a tree?",
+                getValue: () => this.Config.TreeFellLevel,
+                setValue: value => this.Config.TreeFellLevel = value,
+                min: 0,
+                max: 100
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Watering can level",
+                tooltip: () => "Feedback strength when using the watering can",
+                getValue: () => this.Config.WateringCanLevel,
+                setValue: value => this.Config.WateringCanLevel = value,
+                min: 0,
+                max: 100
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Hoe level",
+                tooltip: () => "Feedback strength when using the hoe",
+                getValue: () => this.Config.HoeLevel,
+                setValue: value => this.Config.HoeLevel = value,
+                min: 0,
+                max: 100
+            );
             configMenu.AddNumberOption(
                 mod: this.ModManifest,
                 name: () => "Keep Alive Intensity",
@@ -379,6 +500,57 @@ internal class ConfigMenu
                 min: 0,
                 max: 100
             );
+            
+            //DARKSTAR MERGE
+            
+            //TODO: ADD KISSING LEVELS HERE
+        
+            configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Other mod integrations");
+            configMenu.AddParagraph(mod:this.ModManifest, text: () => "The following features only apply for Xtardew Valley, Dark Club and RainsInteractionMod");
+
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Sex Scene",
+                tooltip: () => "How Strong should the vibrations be during sex scenes?",
+                getValue: () => this.Config.SexSceneLevel,
+                setValue: value => this.Config.SexSceneLevel = value,
+                min: 0,
+                max: 100
+            );
+
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "RainsInteractionMod",
+                tooltip: () => "How Strong should the vibrations be during sex in RainsInteractionMod?",
+                getValue: () => this.Config.RainsInteractionModLevel,
+                setValue: value => this.Config.RainsInteractionModLevel = value,
+                min: 0,
+                max: 100
+            );
+
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "DarkClub Moan",
+                tooltip: () => "How Strong should the vibration be when moan sound is played?",
+                getValue: () => this.Config.DarkClubMoanLevel,
+                setValue: value => this.Config.DarkClubMoanLevel = value,
+                min: 0,
+                max: 100
+            );
+
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "DarkClub Sex Max",
+                tooltip: () => "How Strong should MAX vibrations be during DarkClub sex?",
+                getValue: () => this.Config.MaxDarkClubSexLevel,
+                setValue: value => this.Config.MaxDarkClubSexLevel = value,
+                min: 0,
+                max: 100
+            );
+            
+            //END OF DARKSTAR MERGE
+            
+
             /*
              * 
              * Keybinds
@@ -445,59 +617,6 @@ internal class ConfigMenu
                 min: 1,
                 max: 100
             );
-        
-            configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Grass feedback duration (debug)");
-            configMenu.AddParagraph(mod:this.ModManifest, text: () => "The duration (in milliseconds) of feedback when cutting grass");
-            configMenu.AddNumberOption(
-                mod: this.ModManifest,
-                name: () => "Grass Duration",
-                tooltip: () => "Duration in milliseconds for cutting grass",
-                getValue: () => this.Config.GrassLength,
-                setValue: value => this.Config.GrassLength = value,
-                min: 50,
-                max: 3000
-            );
             
-            configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Tree feedback duration (debug)");
-            configMenu.AddParagraph(mod:this.ModManifest, text: () => "Feedback strength for hitting and felling trees");
-            configMenu.AddNumberOption(
-                mod: this.ModManifest,
-                name: () => "Tree Hit Level",
-                tooltip: () => "Feedback strength when hitting trees",
-                getValue: () => this.Config.TreeChopLevel,
-                setValue: value => this.Config.TreeChopLevel = value,
-                min: 0,
-                max: 100
-            );
-            
-            configMenu.AddNumberOption(
-                mod: this.ModManifest,
-                name: () => "Tree Fell Level",
-                tooltip: () => "Feedback strength when felling trees",
-                getValue: () => this.Config.TreeFellLevel,
-                setValue: value => this.Config.TreeFellLevel = value,
-                min: 0,
-                max: 100
-            );
-            configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Tool feedback");
-            configMenu.AddParagraph(mod:this.ModManifest, text: () => "Feedback strength for using various tools. Strength is multiplied by tool power up to a max of 100 (recommended is 25)");
-            configMenu.AddNumberOption(
-                mod: this.ModManifest,
-                name: () => "Watering can level",
-                tooltip: () => "Feedback strength when using the watering can",
-                getValue: () => this.Config.WateringCanLevel,
-                setValue: value => this.Config.WateringCanLevel = value,
-                min: 0,
-                max: 100
-            );
-            configMenu.AddNumberOption(
-                mod: this.ModManifest,
-                name: () => "Hoe level",
-                tooltip: () => "Feedback strength when using the hoe",
-                getValue: () => this.Config.HoeLevel,
-                setValue: value => this.Config.HoeLevel = value,
-                min: 0,
-                max: 100
-            );
     }
 }
