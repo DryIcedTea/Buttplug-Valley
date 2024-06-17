@@ -180,13 +180,26 @@ internal class ConfigMenu
             
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
-                name: () => "Keep Alive Pulse",
-                tooltip: () => "Vibrate every 30s to keep connection alive?",
-                getValue: () => this.Config.KeepAlive,
-                setValue: value => this.Config.KeepAlive = value
+                name: () => "Grass Cutting",
+                tooltip: () => "Should the device vibrate on cutting grass?",
+                getValue: () => this.Config.VibrateOnGrass,
+                setValue: value => this.Config.VibrateOnGrass = value
+            );
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Tree Hit",
+                tooltip: () => "Should the device vibrate on hitting trees?",
+                getValue: () => this.Config.VibrateOnTreeHit,
+                setValue: value => this.Config.VibrateOnTreeHit = value
             );
             
-            //DAKRSTAR MERGE STUFF HERE
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Tree Felling",
+                tooltip: () => "Should the device vibrate on felling a tree?",
+                getValue: () => this.Config.VibrateOnTreeFell,
+                setValue: value => this.Config.VibrateOnTreeFell = value
+            );
             
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
@@ -195,6 +208,17 @@ internal class ConfigMenu
                 getValue: () => this.Config.VibrateOnKiss,
                 setValue: value => this.Config.VibrateOnKiss = value
             );
+            
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Keep Alive Pulse",
+                tooltip: () => "Vibrate every 30s to keep connection alive?",
+                getValue: () => this.Config.KeepAlive,
+                setValue: value => this.Config.KeepAlive = value
+            );
+            
+            //DAKRSTAR MERGE STUFF HERE
+            
 
             configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Other mod integrations");
             configMenu.AddParagraph(mod:this.ModManifest, text: () => "The following features only apply for Xtardew Valley, Dark Club and RainsInteractionMod");
@@ -419,6 +443,54 @@ internal class ConfigMenu
                 max: 300,
                 interval: 5
             );
+            
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Grass Cutting",
+                tooltip: () => "How Strong should the vibration be when cutting grass?",
+                getValue: () => this.Config.GrassLevel,
+                setValue: value => this.Config.GrassLevel = value,
+                min: 50,
+                max: 3000
+            );
+            
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Tree Hit Level",
+                tooltip: () => "How Strong should the vibration be when hitting trees?",
+                getValue: () => this.Config.TreeChopLevel,
+                setValue: value => this.Config.TreeChopLevel = value,
+                min: 0,
+                max: 100
+            );
+            
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Tree Fell Level",
+                tooltip: () => "How Strong should the vibration be when felling a tree?",
+                getValue: () => this.Config.TreeFellLevel,
+                setValue: value => this.Config.TreeFellLevel = value,
+                min: 0,
+                max: 100
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Watering can level",
+                tooltip: () => "Feedback strength when using the watering can",
+                getValue: () => this.Config.WateringCanLevel,
+                setValue: value => this.Config.WateringCanLevel = value,
+                min: 0,
+                max: 100
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Hoe level",
+                tooltip: () => "Feedback strength when using the hoe",
+                getValue: () => this.Config.HoeLevel,
+                setValue: value => this.Config.HoeLevel = value,
+                min: 0,
+                max: 100
+            );
             configMenu.AddNumberOption(
                 mod: this.ModManifest,
                 name: () => "Keep Alive Intensity",
@@ -545,59 +617,6 @@ internal class ConfigMenu
                 min: 1,
                 max: 100
             );
-        
-            configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Grass feedback duration (debug)");
-            configMenu.AddParagraph(mod:this.ModManifest, text: () => "The duration (in milliseconds) of feedback when cutting grass");
-            configMenu.AddNumberOption(
-                mod: this.ModManifest,
-                name: () => "Grass Duration",
-                tooltip: () => "Duration in milliseconds for cutting grass",
-                getValue: () => this.Config.GrassLength,
-                setValue: value => this.Config.GrassLength = value,
-                min: 50,
-                max: 3000
-            );
             
-            configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Tree feedback duration (debug)");
-            configMenu.AddParagraph(mod:this.ModManifest, text: () => "Feedback strength for hitting and felling trees");
-            configMenu.AddNumberOption(
-                mod: this.ModManifest,
-                name: () => "Tree Hit Level",
-                tooltip: () => "Feedback strength when hitting trees",
-                getValue: () => this.Config.TreeChopLevel,
-                setValue: value => this.Config.TreeChopLevel = value,
-                min: 0,
-                max: 100
-            );
-            
-            configMenu.AddNumberOption(
-                mod: this.ModManifest,
-                name: () => "Tree Fell Level",
-                tooltip: () => "Feedback strength when felling trees",
-                getValue: () => this.Config.TreeFellLevel,
-                setValue: value => this.Config.TreeFellLevel = value,
-                min: 0,
-                max: 100
-            );
-            configMenu.AddSectionTitle(mod:this.ModManifest, text: () => "Tool feedback");
-            configMenu.AddParagraph(mod:this.ModManifest, text: () => "Feedback strength for using various tools. Strength is multiplied by tool power up to a max of 100 (recommended is 25)");
-            configMenu.AddNumberOption(
-                mod: this.ModManifest,
-                name: () => "Watering can level",
-                tooltip: () => "Feedback strength when using the watering can",
-                getValue: () => this.Config.WateringCanLevel,
-                setValue: value => this.Config.WateringCanLevel = value,
-                min: 0,
-                max: 100
-            );
-            configMenu.AddNumberOption(
-                mod: this.ModManifest,
-                name: () => "Hoe level",
-                tooltip: () => "Feedback strength when using the hoe",
-                getValue: () => this.Config.HoeLevel,
-                setValue: value => this.Config.HoeLevel = value,
-                min: 0,
-                max: 100
-            );
     }
 }

@@ -164,11 +164,18 @@ namespace ButtplugValley
         {                                  
             if (SConfig.VibrateOnSexScene) {
                 // Almost all sex scenes in mods use these sounds
-                if ((cueName == "slimeHit" || cueName == "fishSlap" || cueName == "swordswipe" || cueName == "gulp") && Game1.eventUp)
+                if ((cueName == "slimeHit" || cueName == "fishSlap" || cueName == "gulp") && Game1.eventUp)
                 {                 
                     buttplugManager.VibrateDevicePulse(SConfig.SexSceneLevel, 150);
                     return;
-                } 
+                }
+
+                //Spesificlly for cumming sex scene
+                if (cueName == "swordswipe" && Game1.eventUp)
+                {
+                    buttplugManager.VibrateDevicePulse(SConfig.SexSceneLevel, 600);
+                    return;
+                }
             }
             // VibrateOnRainsInteractionMod sex sound
             if (SConfig.VibrateOnRainsInteractionMod && cueName == "ButtHit")
@@ -517,16 +524,15 @@ namespace ButtplugValley
             {
                 foreach (var feature in e.Removed)
                 {
+                    
                     //if feature is grass
-                    if (feature.Value is Grass grass && Config.VibrateOnForagingCollected)
+                    if (feature.Value is Grass grass && Config.VibrateOnGrass)
                     {
-                        Monitor.Log($"Removed {feature.Value.GetType().Name}", LogLevel.Debug);
+                        Monitor.Log($"Removed {feature.Value.GetType().Name}", LogLevel.Trace);
                         Task.Run(async () =>
                         {
-                            //TODO: CLARIFY THAT GRASS IS FORAGING!!!!
-                            //TODO: Add debug duration for testing purposes. Send to discord user
-                            this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {Config.ForagingBasic}.", LogLevel.Debug);
-                            await buttplugManager.VibrateDevicePulse(Config.ForagingBasic, Config.GrassLength);
+                            this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {Config.GrassLevel}.", LogLevel.Trace);
+                            await buttplugManager.VibrateDevicePulse(Config.GrassLevel, 300);
                         });
                     }
                     
@@ -641,9 +647,6 @@ namespace ButtplugValley
             }
             // Update the previous health value for the next tick
             previousHealth = Game1.player.health;
-            
-            //Check if the player is riding a horse
-            if (e.IsMultipleOf(20)) HorseRidingCheck();
 
 
             // Vibrate the plug for keepalive
@@ -652,31 +655,6 @@ namespace ButtplugValley
                 if (!Config.KeepAlive) return;
                 int duration = 250;
                 buttplugManager.VibrateDevicePulse(Config.KeepAliveLevel, duration);
-            }
-        }
-
-        private void HorseRidingCheck()
-        {
-            if (!Context.IsWorldReady) return;
-            
-            // Check if the player is riding a horse
-            bool isRidingHorse = Game1.player.isRidingHorse();
-
-            if (isRidingHorse && Config.VibrateOnHorse)
-            {
-                //Deliberately not including a check for if you werent riding a horse before in case some other vibration interrupts the horseriding
-                wasRidingHorse = true;
-                buttplugManager.VibrateDevice(Config.HorseLevel);
-            }
-            else
-            {
-                if (wasRidingHorse)
-                {
-                    // Player just left the horse, vibrate once at 0
-                    buttplugManager.VibrateDevice(0);
-                }
-                // Set the toggle to false since the player is not riding the horse
-                wasRidingHorse = false;
             }
         }
  

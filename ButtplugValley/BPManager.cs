@@ -154,12 +154,12 @@ namespace ButtplugValley
             // Check if the queue has reached its limit.
             if (vibrationQueue.Count >= config.QueueLength)
             {
-                monitor.Log("Vibration queue is full, skipping", LogLevel.Debug);
+                monitor.Log("Vibration queue is full, skipping", LogLevel.Trace);
                 return;
             }
 
             float intensity = MathHelper.Clamp(level, 0f, 100f);
-            monitor.Log($"VibrateDevicePulse NEW {intensity}", LogLevel.Debug);
+            monitor.Log($"VibrateDevicePulse {intensity}", LogLevel.Trace);
 
             // Create a new task that performs the vibration and add it to the queue
             vibrationQueue.Enqueue(VibrateDeviceWithDuration(intensity, duration));
@@ -176,7 +176,6 @@ namespace ButtplugValley
                         var task = vibrationQueue.Dequeue();
                         await task;
                         
-                        monitor.Log(vibrationQueue.Count.ToString(), LogLevel.Debug);
                         if (vibrationQueue.Count == 0)
                         {
                             await VibrateDevice(0);

@@ -25,8 +25,15 @@ namespace ButtplugValley
         public bool VibrateOnDialogue { get; set; } = true;
         
         public bool VibrateOnHorse { get; set; } = true;
+        
+        public bool VibrateOnGrass { get; set; } = true;
+        
+        public bool VibrateOnTreeHit { get; set; } = true;
+        
+        public bool VibrateOnTreeFell { get; set; } = true;
 
         public bool VibrateOnKiss { get; set; } = true;
+        
 
         public bool VibrateOnSexScene { get; set; } = true;
 
@@ -73,7 +80,7 @@ namespace ButtplugValley
         
         public int QueueLength { get; set; } = 20;
         
-        public int GrassLength { get; set; } = 400;
+        public int GrassLevel { get; set; } = 400;
         
         public int TreeChopLevel { get; set; } = 50;
         
