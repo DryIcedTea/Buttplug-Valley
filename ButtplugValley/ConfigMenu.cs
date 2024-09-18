@@ -187,6 +187,13 @@ internal class ConfigMenu
             );
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
+                name: () => "Tool Usage",
+                tooltip: () => "Should the device vibrate on using tools?",
+                getValue: () => this.Config.VibrateOnToolUse,
+                setValue: value => this.Config.VibrateOnToolUse = value
+            );
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
                 name: () => "Tree Hit",
                 tooltip: () => "Should the device vibrate on hitting trees?",
                 getValue: () => this.Config.VibrateOnTreeHit,
@@ -450,8 +457,17 @@ internal class ConfigMenu
                 tooltip: () => "How Strong should the vibration be when cutting grass?",
                 getValue: () => this.Config.GrassLevel,
                 setValue: value => this.Config.GrassLevel = value,
-                min: 50,
-                max: 3000
+                min: 0,
+                max: 100
+            );
+            configMenu.AddNumberOption(
+                mod: this.ModManifest,
+                name: () => "Tool Usage",
+                tooltip: () => "How Strong should the vibration be when using tools (scales with tool power)?",
+                getValue: () => this.Config.ToolUseLevel,
+                setValue: value => this.Config.ToolUseLevel = value,
+                min: 0,
+                max: 100
             );
             
             configMenu.AddNumberOption(

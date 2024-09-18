@@ -129,6 +129,7 @@ namespace ButtplugValley
         
         public static void TreeHit_Postfix(Tree __instance)
         {
+            if (!StaticConfig.VibrateOnTreeHit) { return; }
             StaticMonitor.Log("Tree hit", LogLevel.Info);
             StaticButtplugManager.VibrateDevicePulse(StaticConfig.TreeChopLevel, 300);
             // Use StaticButtplugManager as needed
@@ -137,13 +138,16 @@ namespace ButtplugValley
         // This method will be called after a tree falls
         public static void TreeFall_Postfix(Tree __instance)
         {
+            if (!StaticConfig.VibrateOnTreeFell) { return; }
             StaticMonitor.Log("Tree fell", LogLevel.Info);
             StaticButtplugManager.VibrateDevicePulse(StaticConfig.TreeFellLevel, 2000);
         }
         
         public static void WateringCan_Postfix(WateringCan __instance, GameLocation location, int x, int y, int power, Farmer who)
         {
-            int intensity = 25 * (power+1);
+            if (StaticConfig.VibrateOnToolUse == false) { return; }
+            
+            int intensity = StaticConfig.ToolUseLevel * (power+1);
 
             
             StaticMonitor.Log($"Watering can used with power {power}, intensity {intensity}", LogLevel.Info);
@@ -152,8 +156,10 @@ namespace ButtplugValley
         }
 
         public static void Hoe_Postfix(Hoe __instance, GameLocation location, int x, int y, int power, Farmer who)
-        {
-            int intensity = 25 * (power + 1);
+        { 
+            if (StaticConfig.VibrateOnToolUse == false) { return; }
+            
+            int intensity = StaticConfig.ToolUseLevel * (power + 1);
 
             StaticMonitor.Log($"Hoe used with power {power}, intensity {intensity}", LogLevel.Info);
 
@@ -343,6 +349,8 @@ namespace ButtplugValley
                 this.Monitor.Log($"DESTROYED {destroyedStoneCount} STONES", LogLevel.Trace);
                 double durationmath = 3920 / (1 + (10 * Math.Exp(-0.16 * destroyedStoneCount)));
                 int duration = Convert.ToInt32(durationmath);
+
+                if (!StaticConfig.VibrateOnStoneBroken) {return;}
 
                 // Vibrate the device
                 this.Monitor.Log($"VIBRATING FOR {duration} milliseconds", LogLevel.Trace);
@@ -552,8 +560,7 @@ namespace ButtplugValley
                         // Large rock or stub i think
                         Task.Run(async () =>
                         {
-                            this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {80}. for 1.2 seconds", LogLevel.Trace);
-                            await buttplugManager.VibrateDevicePulse(80, 1200);
+                            await buttplugManager.VibrateDevicePulse(StaticConfig.StoneBrokenLevel, 1200);
                         });
                     }
                 }
