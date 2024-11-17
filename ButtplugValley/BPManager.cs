@@ -48,7 +48,7 @@ namespace ButtplugValley
                 monitor.Log("Buttplug already connected, skipping", LogLevel.Debug);
                 return;
             }
-            monitor.Log("Buttplug Client Connecting", LogLevel.Info);
+            monitor.Log("Buttplug Client Connecting new version", LogLevel.Info);
             client.Dispose();
             client = new ButtplugClient("ButtplugValley");
             await client.ConnectAsync(new ButtplugWebsocketConnector(new Uri($"ws://{_intifaceIP}")));

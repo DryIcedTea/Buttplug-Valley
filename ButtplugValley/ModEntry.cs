@@ -155,7 +155,7 @@ namespace ButtplugValley
         {
             if (!StaticConfig.VibrateOnTreeHit) { return; }
             StaticMonitor.Log("Tree hit", LogLevel.Info);
-            StaticButtplugManager.VibrateDevicePulse(StaticConfig.TreeChopLevel, 300);
+            VibrateDevicePulseSafe(StaticConfig.TreeChopLevel, 300);
             // Use StaticButtplugManager as needed
         }
 
@@ -164,7 +164,7 @@ namespace ButtplugValley
         {
             if (!StaticConfig.VibrateOnTreeFell) { return; }
             StaticMonitor.Log("Tree fell", LogLevel.Info);
-            StaticButtplugManager.VibrateDevicePulse(StaticConfig.TreeFellLevel, 2000);
+            VibrateDevicePulseSafe(StaticConfig.TreeFellLevel, 2000);
         }
         
         public static void WateringCan_Postfix(WateringCan __instance, GameLocation location, int x, int y, int power, Farmer who)
@@ -176,7 +176,7 @@ namespace ButtplugValley
             
             StaticMonitor.Log($"Watering can used with power {power}, intensity {intensity}", LogLevel.Info);
             
-            StaticButtplugManager.VibrateDevicePulse(intensity, 300);
+            VibrateDevicePulseSafe(intensity, 300);
         }
 
         public static void Hoe_Postfix(Hoe __instance, GameLocation location, int x, int y, int power, Farmer who)
@@ -187,7 +187,7 @@ namespace ButtplugValley
 
             StaticMonitor.Log($"Hoe used with power {power}, intensity {intensity}", LogLevel.Info);
 
-            StaticButtplugManager.VibrateDevicePulse(intensity, 300);
+            VibrateDevicePulseSafe(intensity, 300);
         }
 
         static async void OnSoundPlayed(string cueName)
@@ -313,7 +313,7 @@ namespace ButtplugValley
             if (e.NewMenu is DialogueBox && Config.VibrateOnDialogue)
             {
                 Monitor.Log("Dialogue Box Triggered", LogLevel.Trace);
-                await buttplugManager.VibrateDevicePulse(Config.DialogueLevel, 550);
+                await VibrateDevicePulseSafe(Config.DialogueLevel, 550);
             }
         }
 
@@ -342,7 +342,7 @@ namespace ButtplugValley
                 
 
                 // Vibrate the device
-                buttplugManager.VibrateDevicePulse(Config.EnemyKilledLevel, 400*defeatedEnemyCount);
+                VibrateDevicePulseSafe(Config.EnemyKilledLevel, 400*defeatedEnemyCount);
             }
         }
 
@@ -378,7 +378,7 @@ namespace ButtplugValley
 
                 // Vibrate the device
                 this.Monitor.Log($"VIBRATING FOR {duration} milliseconds", LogLevel.Trace);
-                buttplugManager.VibrateDevicePulse(Config.StoneBrokenLevel, duration);
+                VibrateDevicePulseSafe(Config.StoneBrokenLevel, duration);
             }
             GameLocation location = Game1.currentLocation;
             
@@ -396,7 +396,7 @@ namespace ButtplugValley
             {
                 // Vibrate the device when a broken branch is found
                 this.Monitor.Log("Branch Broken", LogLevel.Trace);
-                buttplugManager.VibrateDevicePulse(Config.TreeBrokenLevel);
+                VibrateDevicePulseSafe(Config.TreeBrokenLevel, 400);
             }
         }
 
@@ -471,7 +471,7 @@ namespace ButtplugValley
                         {
                             //THIS IS TEMPORARY CODE FOR TESTING PURPOSES ==============================================================================================================
                             double durationmath = 3920 / (1 + (10 * Math.Exp(-0.16 * 1)));
-                            buttplugManager.VibrateDevicePulse(Config.StoneBrokenLevel, Convert.ToInt32(durationmath));
+                            VibrateDevicePulseSafe(Config.StoneBrokenLevel, Convert.ToInt32(durationmath));
                             break;
                         }
                     }
@@ -496,7 +496,7 @@ namespace ButtplugValley
                         {
                             //THIS IS TEMPORARY CODE FOR TESTING PURPOSES ===================================================================================================================================
                             double durationmath = 3920 / (1 + (10 * Math.Exp(-0.16 * 1)));
-                            buttplugManager.VibrateDevicePulse(Config.StoneBrokenLevel, Convert.ToInt32(durationmath));
+                            VibrateDevicePulseSafe(Config.StoneBrokenLevel, Convert.ToInt32(durationmath));
                             break;
                         }
                     }
@@ -536,16 +536,16 @@ namespace ButtplugValley
             switch (obj.Quality)
             {
                 case StardewValley.Object.medQuality:
-                    _ = buttplugManager.VibrateDevicePulse(Config.SilverLevel);
+                    _ = VibrateDevicePulseSafe(Config.SilverLevel, 400);
                     break;
                 case StardewValley.Object.highQuality:
-                    _ = buttplugManager.VibrateDevicePulse(Config.GoldLevel, 650);
+                    _ = VibrateDevicePulseSafe(Config.GoldLevel, 650);
                     break;
                 case StardewValley.Object.bestQuality:
-                    _ = buttplugManager.VibrateDevicePulse(Config.IridiumLevel, 1200);
+                    _ = VibrateDevicePulseSafe(Config.IridiumLevel, 1200);
                     break;
                 default:
-                    _ = buttplugManager.VibrateDevicePulse(basicLevel); // Adjust the power level as desired
+                    _ = VibrateDevicePulseSafe(basicLevel, 400); // Adjust the power level as desired
                     break;
             }
         }
@@ -564,7 +564,7 @@ namespace ButtplugValley
                         Task.Run(async () =>
                         {
                             this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {Config.GrassLevel}.", LogLevel.Trace);
-                            await buttplugManager.VibrateDevicePulse(Config.GrassLevel, 300);
+                            await VibrateDevicePulseSafe(Config.GrassLevel, 300);
                         });
                     }
                     
@@ -584,7 +584,7 @@ namespace ButtplugValley
                         // Large rock or stub i think
                         Task.Run(async () =>
                         {
-                            await buttplugManager.VibrateDevicePulse(StaticConfig.StoneBrokenLevel, 1200);
+                            await VibrateDevicePulseSafe(StaticConfig.StoneBrokenLevel, 1200);
                         });
                     }
                 }
@@ -685,7 +685,7 @@ namespace ButtplugValley
             {
                 if (!Config.KeepAlive) return;
                 int duration = 250;
-                buttplugManager.VibrateDevicePulse(Config.KeepAliveLevel, duration);
+                VibrateDevicePulseSafe(Config.KeepAliveLevel, duration);
             }
         }
  
@@ -699,7 +699,7 @@ namespace ButtplugValley
                 IReflectedField<int> minekartLives = Helper.Reflection.GetField<int>(game, "livesLeft");
                 if (minekartLives.GetValue() < previousMinekartHealth)
                 {
-                    buttplugManager.VibrateDevicePulse(Config.ArcadeLevel);
+                    VibrateDevicePulseSafe(Config.ArcadeLevel, 400);
                     this.Monitor.Log($"{Game1.player.Name} Life lost. Vibrating at {Config.ArcadeLevel}.", LogLevel.Trace);
                 }
                 previousMinekartHealth = minekartLives.GetValue();
@@ -713,7 +713,7 @@ namespace ButtplugValley
                 IReflectedField<int> abigailLives = Helper.Reflection.GetField<int>(abigailGame, "lives");
                 if (abigailLives.GetValue() != previousAbigailHealth)
                 {
-                    buttplugManager.VibrateDevicePulse(Config.ArcadeLevel, 600);
+                    VibrateDevicePulseSafe(Config.ArcadeLevel, 600);
                     this.Monitor.Log($"{Game1.player.Name} Life lost. Vibrating at {Config.ArcadeLevel}.", LogLevel.Trace);
                 }
                 previousAbigailHealth = abigailLives.GetValue();
@@ -723,7 +723,7 @@ namespace ButtplugValley
                 if (currentCoins > previousCoins)
                 {
                     // Coin collected, trigger vibration
-                    buttplugManager.VibrateDevicePulse(Config.ArcadeLevel, 600);
+                    VibrateDevicePulseSafe(Config.ArcadeLevel, 600);
                     Monitor.Log($"{Game1.player.Name} Coin collected. Vibrating at {Config.ArcadeLevel}.", LogLevel.Trace);
                 }
                 previousCoins = currentCoins;
