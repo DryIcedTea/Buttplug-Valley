@@ -29,8 +29,11 @@ namespace ButtplugValley
         private int _levelUps;
         private bool wasRidingHorse = false;
 
-        private const int CoffeeBeansID = 433;
-        private const int WoolID = 440;
+        //private const int CoffeeBeansID = 433;
+        //private const int WoolID = 440;
+
+        private const string CoffeeBeansID = "(O)433";
+        private const string WoolID = "(O)440";
 
         //Arcade Machines
         private int previousMinekartHealth;
@@ -48,6 +51,26 @@ namespace ButtplugValley
         private readonly static string[] darkClubSounds = {"badend", "fellatio01", "fellatio02", "fellatio03", "fellatio04", "fellatio05", "fuck01", "fuck02", "fuck03"};
         private readonly static string[] darkClubSoundsOther = {"moan01", "moan02", "moan03", "moan04", "moan05", "moan06", "moan07", "moan08", "moan09", "moan10", "moan11", "moan12", "moan13", "moan14", "moan15", "pant01", "pant02", "pant03", "pant04", "pant05"};
 
+        
+        private static bool isVibratingS = false;
+
+        private static async Task VibrateDevicePulseSafe(float intensity, int duration)
+        {
+            if (isVibratingS) return;
+            isVibratingS = true;
+            try
+            {
+                await StaticButtplugManager.VibrateDevicePulse(intensity, duration);
+            }
+            catch (Exception ex)
+            {
+                StaticMonitor.Log($"Error during vibration: {ex.Message}", LogLevel.Error);
+            }
+            finally
+            {
+                isVibratingS = false;
+            }
+        }
 
         public override void Entry(IModHelper helper)
         {
@@ -69,6 +92,7 @@ namespace ButtplugValley
             StaticConfig = Config;
             
             ModMonitor = this.Monitor;
+            
 
             helper.Events.Input.ButtonPressed += OnButtonPressed;
             helper.Events.GameLoop.DayStarted += OnDayStarted;
@@ -417,7 +441,7 @@ namespace ButtplugValley
                         obj.Category == StardewValley.Object.FruitsCategory || 
                         obj.Category == StardewValley.Object.MilkCategory || 
                         obj.Category == StardewValley.Object.EggCategory || 
-                        obj.ParentSheetIndex is CoffeeBeansID or WoolID)
+                        obj.QualifiedItemId is CoffeeBeansID or WoolID)
                     {
                         
                         if (!Config.VibrateOnCropAndMilkCollected) return;
@@ -434,14 +458,14 @@ namespace ButtplugValley
                     }
                     if (obj.Category == StardewValley.Object.GreensCategory ||
                         obj.Category == StardewValley.Object.sellAtFishShopCategory ||
-                        obj.parentSheetIndex == 771) //771 is fiber i think
+                        obj.QualifiedItemId == "(O)771") //771 is fiber i think
                     {
                         if (!Config.VibrateOnForagingCollected) return;
                         this.Monitor.Log("Foraging Added", LogLevel.Trace);
                         VibrateBasedOnQuality(obj, Config.ForagingBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
-                    if (obj.Category == StardewValley.Object.metalResources || obj.parentSheetIndex == 390) //390 is stone
+                    if (obj.Category == StardewValley.Object.metalResources || obj.QualifiedItemId == "(O)390") //390 is stone
                     {
                         if (Config.StonePickedUpDebug)
                         {
@@ -466,7 +490,7 @@ namespace ButtplugValley
                         break; // Exit the loop after the first harvested crop is found
                     }
 
-                    if (obj.Category == StardewValley.Object.metalResources || obj.parentSheetIndex == 390) //390 is stone
+                    if (obj.Category == StardewValley.Object.metalResources || obj.QualifiedItemId == "(O)390") //390 is stone
                     {
                         if (Config.StonePickedUpDebug)
                         {
@@ -481,7 +505,7 @@ namespace ButtplugValley
                         obj.Category == StardewValley.Object.FruitsCategory ||
                         obj.Category == StardewValley.Object.MilkCategory ||
                         obj.Category == StardewValley.Object.EggCategory ||
-                        obj.ParentSheetIndex is CoffeeBeansID or WoolID)
+                        obj.QualifiedItemId is CoffeeBeansID or WoolID)
                     {
                         if (!Config.VibrateOnCropAndMilkCollected) return;
                         this.Monitor.Log("Crop or Milk Changed", LogLevel.Trace);

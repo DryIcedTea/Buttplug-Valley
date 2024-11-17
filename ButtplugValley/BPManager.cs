@@ -22,7 +22,8 @@ namespace ButtplugValley
         private Queue<Task> vibrationQueue = new Queue<Task>();
                 private SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
 
-
+                
+                
         public async Task ScanForDevices()
         {
             // If we're not connected, don't even run
