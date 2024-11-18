@@ -42,7 +42,7 @@ namespace ButtplugValley
                 }
                 if (hasFailedCatch())
                 {
-                    _monitor.Log("Fail to catch fish", LogLevel.Debug);
+                    _monitor.Log("Fail to catch fish", LogLevel.Trace);
                     Miss(rod);
                     ResetFishingStages();
                 }    

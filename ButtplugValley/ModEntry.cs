@@ -60,7 +60,9 @@ namespace ButtplugValley
             isVibratingS = true;
             try
             {
+                StaticMonitor.Log($"Queuing vibration at {intensity}% intensity for {duration} milliseconds", LogLevel.Debug);
                 await StaticButtplugManager.VibrateDevicePulse(intensity, duration);
+                
             }
             catch (Exception ex)
             {
@@ -423,49 +425,51 @@ namespace ButtplugValley
         {
             if (!Context.IsWorldReady)
                 return;
+            
+            this.Monitor.Log("Inventory Changed", LogLevel.Trace);
 
             // Check if any items were added from the inventory
             foreach (Item item in e.Added)
             {
-                if (item is StardewValley.Object obj)
+                if (item != null)
                 {
-                    this.Monitor.Log($"Added Item: {obj.Name}, Category: {obj.getCategoryName()}, Category Id: {obj.Category}", LogLevel.Trace);
-                    if (obj.Category == StardewValley.Object.FishCategory)
+                    this.Monitor.Log($"Added Item: {item.Name}, Category: {item.getCategoryName()}, Category Id: {item.Category}", LogLevel.Trace);
+                    if (item.Category == StardewValley.Object.FishCategory)
                     {
                         if (!Config.VibrateOnFishCollected) return;
                         this.Monitor.Log("Fish", LogLevel.Trace);
-                        VibrateBasedOnQuality(obj, Config.FishCollectedBasic);
+                        VibrateBasedOnQuality(item, Config.FishCollectedBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
-                    if (obj.Category == StardewValley.Object.VegetableCategory ||
-                        obj.Category == StardewValley.Object.FruitsCategory || 
-                        obj.Category == StardewValley.Object.MilkCategory || 
-                        obj.Category == StardewValley.Object.EggCategory || 
-                        obj.QualifiedItemId is CoffeeBeansID or WoolID)
+                    if (item.Category == StardewValley.Object.VegetableCategory ||
+                        item.Category == StardewValley.Object.FruitsCategory || 
+                        item.Category == StardewValley.Object.MilkCategory || 
+                        item.Category == StardewValley.Object.EggCategory || 
+                        item.QualifiedItemId is CoffeeBeansID or WoolID)
                     {
                         
                         if (!Config.VibrateOnCropAndMilkCollected) return;
                         this.Monitor.Log("Crop or Milk Added", LogLevel.Trace);
-                        VibrateBasedOnQuality(obj, Config.CropAndMilkBasic);
+                        VibrateBasedOnQuality(item, Config.CropAndMilkBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
-                    if (obj.Category == StardewValley.Object.flowersCategory)
+                    if (item.Category == StardewValley.Object.flowersCategory)
                     {
                         if (!Config.VibrateOnFlowersCollected) return;
                         this.Monitor.Log("Flower Added", LogLevel.Trace);
-                        VibrateBasedOnQuality(obj, Config.FlowerBasic);
+                        VibrateBasedOnQuality(item, Config.FlowerBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
-                    if (obj.Category == StardewValley.Object.GreensCategory ||
-                        obj.Category == StardewValley.Object.sellAtFishShopCategory ||
-                        obj.QualifiedItemId == "(O)771") //771 is fiber i think
+                    if (item.Category == StardewValley.Object.GreensCategory ||
+                        item.Category == StardewValley.Object.sellAtFishShopCategory ||
+                        item.QualifiedItemId == "(O)771") //771 is fiber i think
                     {
                         if (!Config.VibrateOnForagingCollected) return;
                         this.Monitor.Log("Foraging Added", LogLevel.Trace);
-                        VibrateBasedOnQuality(obj, Config.ForagingBasic);
+                        VibrateBasedOnQuality(item, Config.ForagingBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
-                    if (obj.Category == StardewValley.Object.metalResources || obj.QualifiedItemId == "(O)390") //390 is stone
+                    if (item.Category == StardewValley.Object.metalResources || item.QualifiedItemId == "(O)390") //390 is stone
                     {
                         if (Config.StonePickedUpDebug)
                         {
@@ -480,17 +484,17 @@ namespace ButtplugValley
             foreach (ItemStackSizeChange change in e.QuantityChanged)
             {
                 // Check if the changed item is a fish
-                if (change.Item is StardewValley.Object obj)
+                if (change.NewSize > change.OldSize)
                 {
                     //this.Monitor.Log($"Changed Item: {obj.Name}, Category: {obj.getCategoryName()}, Category Id: {obj.Category}", LogLevel.Debug);
-                    if (obj.Category == StardewValley.Object.FishCategory)
+                    if (change.Item.Category == StardewValley.Object.FishCategory)
                     {
                         if (!Config.VibrateOnFishCollected) return;
-                        VibrateBasedOnQuality(obj, Config.FishCollectedBasic);
+                        VibrateBasedOnQuality(change.Item, Config.FishCollectedBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
 
-                    if (obj.Category == StardewValley.Object.metalResources || obj.QualifiedItemId == "(O)390") //390 is stone
+                    if (change.Item.Category == StardewValley.Object.metalResources || change.Item.QualifiedItemId == "(O)390") //390 is stone
                     {
                         if (Config.StonePickedUpDebug)
                         {
@@ -501,38 +505,39 @@ namespace ButtplugValley
                         }
                     }
                     
-                    if (obj.Category == StardewValley.Object.VegetableCategory ||
-                        obj.Category == StardewValley.Object.FruitsCategory ||
-                        obj.Category == StardewValley.Object.MilkCategory ||
-                        obj.Category == StardewValley.Object.EggCategory ||
-                        obj.QualifiedItemId is CoffeeBeansID or WoolID)
+                    if (change.Item.Category == StardewValley.Object.VegetableCategory ||
+                        change.Item.Category == StardewValley.Object.FruitsCategory ||
+                        change.Item.Category == StardewValley.Object.MilkCategory ||
+                        change.Item.Category == StardewValley.Object.EggCategory ||
+                        change.Item.QualifiedItemId is CoffeeBeansID or WoolID)
                     {
                         if (!Config.VibrateOnCropAndMilkCollected) return;
                         this.Monitor.Log("Crop or Milk Changed", LogLevel.Trace);
-                        VibrateBasedOnQuality(obj, Config.CropAndMilkBasic);
+                        VibrateBasedOnQuality(change.Item, Config.CropAndMilkBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
-                    if (obj.Category == StardewValley.Object.flowersCategory)
+                    if (change.Item.Category == StardewValley.Object.flowersCategory)
                     {
                         if (!Config.VibrateOnFlowersCollected) return;
                         this.Monitor.Log("Flower Changed", LogLevel.Trace);
-                        VibrateBasedOnQuality(obj, Config.FlowerBasic);
+                        VibrateBasedOnQuality(change.Item, Config.FlowerBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
-                    if (obj.Category == StardewValley.Object.GreensCategory ||
-                        obj.Category == StardewValley.Object.sellAtFishShopCategory)
+                    if (change.Item.Category == StardewValley.Object.GreensCategory ||
+                        change.Item.Category == StardewValley.Object.sellAtFishShopCategory)
                     {
                         if (!Config.VibrateOnForagingCollected) return;
                         this.Monitor.Log("Foraging Changed", LogLevel.Trace);
-                        VibrateBasedOnQuality(obj, Config.ForagingBasic);
+                        VibrateBasedOnQuality(change.Item, Config.ForagingBasic);
                         break; // Exit the loop after the first harvested crop is found
                     }
                 }
             }
         }
 
-        private void VibrateBasedOnQuality(StardewValley.Object obj, int basicLevel)
+        private void VibrateBasedOnQuality(Item obj, int basicLevel)
         {
+            this.Monitor.Log("Vibrating based on quality", LogLevel.Trace);
             switch (obj.Quality)
             {
                 case StardewValley.Object.medQuality:

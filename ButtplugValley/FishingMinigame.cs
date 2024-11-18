@@ -60,7 +60,7 @@ namespace ButtplugValley
                 }
 
                 float captureLevel = distanceFromCatchingField.GetValue();
-                monitor.Log($"distancefrom {captureLevel}", LogLevel.Debug);
+                monitor.Log($"distancefrom {captureLevel}", LogLevel.Trace);
 
                 // Scale the capture level based on the maximum vibration value
                 float scaledCaptureLevel = captureLevel * maxVibration;
@@ -71,7 +71,7 @@ namespace ButtplugValley
                 // Vibrate the device based on the capture percentage if it has changed
                 if (capturePercentage != previousCaptureLevel)
                 {
-                    monitor.Log($"FISHINGMINIGAME {capturePercentage}", LogLevel.Debug);
+                    monitor.Log($"FISHINGMINIGAME {capturePercentage}", LogLevel.Trace);
                     _bpManager.VibrateDevice(capturePercentage);
                     previousCaptureLevel = capturePercentage;
                 }
@@ -81,7 +81,7 @@ namespace ButtplugValley
                 // The bobber bar menu is no longer active, stop vibrating the device
                 if (previousCaptureLevel > 0)
                 {
-                    monitor.Log("Stopping device vibration", LogLevel.Debug);
+                    monitor.Log("Stopping device vibration", LogLevel.Trace);
                     _bpManager.VibrateDevice(0);
                     previousCaptureLevel = 0;
                 }
