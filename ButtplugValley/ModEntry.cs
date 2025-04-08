@@ -579,9 +579,7 @@ namespace ButtplugValley
                             Task.Run(async () =>
                             {
                                 this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {80}.", LogLevel.Trace);
-                                await buttplugManager.VibrateDevice(Config.TreeBrokenLevel);
-                                await Task.Delay(420);
-                                await buttplugManager.VibrateDevice(0);
+                                await buttplugManager.VibrateDevicePulse(Config.TreeBrokenLevel, 420);
                             });
                     }
                     if (feature.Value is ResourceClump resourceClump && Config.VibrateOnStoneBroken)
@@ -676,9 +674,7 @@ namespace ButtplugValley
                 Task.Run(async () =>
                 {
                     this.Monitor.Log($"{Game1.player.Name} VIBRATING AT {intensity}.", LogLevel.Trace);
-                    await buttplugManager.VibrateDevice(intensity);
-                    await Task.Delay(380);
-                    await buttplugManager.VibrateDevice(0);
+                    await buttplugManager.VibrateDevicePulse(intensity, 380);
                 });
             }
             // Update the previous health value for the next tick

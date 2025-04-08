@@ -48,7 +48,7 @@ namespace ButtplugValley
 
             if (Game1.activeClickableMenu is StardewValley.Menus.BobberBar menu)
             {
-                monitor.Log("FishingMinigameIsActive", LogLevel.Debug);
+                monitor.Log("FishingMinigameIsActive", LogLevel.Trace);
 
                 // Get the distanceFromCatching field using reflection
                 IReflectedField<float> distanceFromCatchingField = this.reflectionHelper.GetField<float>(menu, "distanceFromCatching");
